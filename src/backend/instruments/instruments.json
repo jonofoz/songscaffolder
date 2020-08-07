@@ -1,0 +1,8 @@
+{
+    "instruments": {
+        "Guitar": 4,
+        "Piano": 3,
+        "Violin": 3,
+        "Daxophone": 5
+    }
+}

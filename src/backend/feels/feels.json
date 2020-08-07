@@ -1,0 +1,10 @@
+{
+    "feels": {
+        "Glitchy": 1,
+        "Swirling": 2,
+        "Staccato": 3,
+        "Binaural": 3,
+        "Rubato": 4,
+        "Legato": 5
+    }
+}
