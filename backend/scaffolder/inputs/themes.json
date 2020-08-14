@@ -1,0 +1,20 @@
+{
+    "themes": {
+        "Western": 3,
+        "Horror": 5,
+        "Oriental": 3,
+        "Celtic": 5,
+        "Alpine": 3,
+        "Mediterranean": 3,
+        "Middle-Eastern": 3,
+        "African": 3,
+        "Scandinavian": 3,
+        "Slavic": 3,
+        "Baltic": 3,
+        "Gypsy": 3,
+        "Mexican": 2,
+        "European Renaissance": 4,
+        "Gangster": 3,
+        "Vice": 2
+    }
+}
