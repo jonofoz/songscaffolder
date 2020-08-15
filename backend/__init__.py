@@ -2,10 +2,11 @@ import sys
 from random import randint as r_int
 
 sys.path.append("..")
-from common import attributes
+from common import attributes_map
 from scaffolder import SongScaffolder
 
-init_data = {attr:True for attr in attributes.keys()}
+# These will of course change with user input, but for now...
+attributes_to_use = {attr:True for attr in attributes_map.keys()}
 directives = {
     "key_signatures": {
         "use_spicy_modes": True,
@@ -13,6 +14,6 @@ directives = {
     }
 }
 
-with SongScaffolder() as scaffolder:
+with SongScaffolder(attributes_to_use, directives) as scaffolder:
     scaffolder.generate()
-    scaffolder.print()
+    scaffolder.print_results()

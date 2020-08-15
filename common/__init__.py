@@ -1,4 +1,4 @@
-attributes = {
+attributes_map = {
     "CHORD": "chords",
     "FEELS": "feels",
     "GENRE": "genres",
