@@ -1,58 +1,60 @@
 {
-    "letters": {
-        "C": 5,
-        "C#": 5,
-        "D": 5,
-        "D#": 5,
-        "E": 5,
-        "F": 5,
-        "F#": 5,
-        "G": 5,
-        "G#": 5,
-        "A": 5,
-        "A#": 5,
-        "B": 5
-    },
-    "modes": {
-        "mild": {
-            "Ionian": 5,
-            "Dorian": 5,
-            "Phrygian": 5,
-            "Lydian": 5,
-            "Mixolydian": 5,
-            "Aeolian": 5,
-            "Locrian": 5
+    "key_signatures": {
+        "roots": {
+            "C": 5,
+            "C#": 5,
+            "D": 5,
+            "D#": 5,
+            "E": 5,
+            "F": 5,
+            "F#": 5,
+            "G": 5,
+            "G#": 5,
+            "A": 5,
+            "A#": 5,
+            "B": 5
         },
-        "spicy": {
-            "Major Bebop": 5,
-            "Major Pentatonic": 4,
-            "Minor Harmonic": 4,
-            "Minor Hungarian": 3,
-            "Minor Melodic": 5,
-            "Minor Neapolitan": 3,
-            "Minor Pentatonic": 3,
-            "Arabic": 2,
-            "Blues": 3,
-            "Diminished": 2,
-            "Dominant Bebop": 3,
-            "Enigmatic": 1,
-            "Neapolitan": 1,
-            "Insen": 2,
-            "Whole Tone": 2
+        "modes": {
+            "mild": {
+                "Ionian": 5,
+                "Dorian": 5,
+                "Phrygian": 5,
+                "Lydian": 5,
+                "Mixolydian": 5,
+                "Aeolian": 5,
+                "Locrian": 5
+            },
+            "spicy": {
+                "Major Bebop": 5,
+                "Major Pentatonic": 4,
+                "Minor Harmonic": 4,
+                "Minor Hungarian": 3,
+                "Minor Melodic": 5,
+                "Minor Neapolitan": 3,
+                "Minor Pentatonic": 3,
+                "Arabic": 2,
+                "Blues": 3,
+                "Diminished": 2,
+                "Dominant Bebop": 3,
+                "Enigmatic": 1,
+                "Neapolitan": 1,
+                "Insen": 2,
+                "Whole Tone": 2
+            }
+        },
+        "generic": {
+            "0 sharps/flats": 5,
+            "1 sharp": 5,
+            "2 sharps": 5,
+            "3 sharps": 5,
+            "4 sharps": 5,
+            "5 sharps": 5,
+            "6 sharps": 5,
+            "1 flat": 5,
+            "2 flats": 5,
+            "3 flats": 5,
+            "4 flats": 5,
+            "5 flats": 5
         }
-    },
-    "signatures": {
-        "0 sharps/flats": 5,
-        "1 sharp": 5,
-        "2 sharps": 5,
-        "3 sharps": 5,
-        "4 sharps": 5,
-        "5 sharps": 5,
-        "6 sharps": 5,
-        "1 flat": 5,
-        "2 flats": 5,
-        "3 flats": 5,
-        "4 flats": 5,
-        "5 flats": 5
     }
 }
