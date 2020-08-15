@@ -1,0 +1,58 @@
+{
+    "chords": {
+        "5": 5,
+        "7": 5,
+    },
+    "feels": {
+        "Glitchy": 1,
+        "Swirling": 2
+    },
+    "genres": {
+        "Ska": 1,
+        "Pop": 2
+    },
+    "influences": {
+        "Mariah Carey": 1,
+        "U2": 2
+    },
+    "instruments": {
+        "Guitar": 4,
+        "Piano": 3
+    },
+    "key_signatures":{
+        "roots": {
+            "C": 5,
+            "C#": 5
+        },
+        "modes": {
+            "mild": {
+                "Ionian": 5,
+                "Dorian": 5
+            },
+            "spicy": {
+                "Major Bebop": 5,
+                "Major Pentatonic": 4
+            }
+        },
+        "generic": {
+            "0 sharps/flats": 5,
+            "1 sharp": 5
+        }
+    },
+    "moods": {
+        "Stoned": 1,
+        "Confused": 2
+    },
+    "themes": {
+        "Western": 3,
+        "Horror": 5,
+    },
+    "time_signatures": {
+        "numerator": {
+            "2":  2
+        },
+        "denominator": {
+            "2":  2
+        }
+    }
+}
