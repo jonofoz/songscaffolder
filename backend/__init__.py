@@ -14,6 +14,9 @@ directives = {
     }
 }
 
-with SongScaffolder(attributes_to_use, directives) as scaffolder:
-    scaffolder.generate()
-    scaffolder.print_results()
+def main():
+    with SongScaffolder(attributes_to_use, directives) as scaffolder:
+        scaffolder.print_results()
+
+if __name__ == "__main__":
+    main()

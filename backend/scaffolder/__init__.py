@@ -22,16 +22,19 @@ def _count_keys_in_dict(data):
     return total_keys
 
 class SongScaffolder(object):
-
     def __init__(self, attributes={}, directives={}):
         self.attributes = attributes
         self.directives = directives
 
     def __enter__(self):
+        self.generate()
         return self
 
     def __exit__(self, type, value, traceback):
         pass
+
+    def __getitem__(self, attr):
+        return self.song_data[attr]
 
     def generate(self):
         self.song_data      = {}

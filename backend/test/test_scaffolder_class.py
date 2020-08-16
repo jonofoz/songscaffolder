@@ -1,46 +1,28 @@
 import sys
-sys.path.append("../..")
-
 import os
 import json
 import unittest
+sys.path.append(os.path.join("..", ".."))
 
-from common       import attributes
+from common       import attributes_map
 from common.utils import get_file_dir
-
-import pdb;pdb.set_trace()
+from backend.scaffolder import SongScaffolder
 
 class TestScaffolderClass(unittest.TestCase):
-
-    @classmethod
-    def setUpClass(TestScaffolderClass):
-        local_dir = get_file_dir(__file__)
-        with open(os.path.join(local_dir, "test_inputs", "test_data.json")) as f:
-            data = json.load(f)
-            for attr_name in [
-                "chords",
-                "feels",
-                "genres",
-                "influences"
-                "instruments",
-                "key_signatures",
-                "moods",
-                "themes",
-                "time_signatures",
-            ]:
-            setattr(TestScaffolderClass, attr_name, data[attr_name])
-
     def setUp(self):
-        self.metadata = {
-            "include": "all",
-            "data": {
-
+        self.attributes_to_use = {attr:True for attr in attributes_map.keys()}
+        self.directives = {
+            "key_signatures": {
+                "use_spicy_modes": True,
+                "include_generics": False
             }
         }
+        self.metadata = {}
 
-    def test_random_all(self):
+    def test_all_keys(self):
+        with SongScaffolder(self.attributes_to_use, self.directives) as scaffolder:
+            for k in attributes_map.keys():
+                self.assertTrue(k in scaffolder.song_data)
 
-        with Scaffolder(metadata) as scaffolder:
-
-            for item in ["instruments", "time_signatures", "feels", "moods", "genres", "themes", "time_signatures"]:
-                self.assertTrue(item in scaffolder.keys())
+if __name__ == "__main__":
+    unittest.main()
