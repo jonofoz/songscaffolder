@@ -5,11 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Shrikhand&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="style/style.css">
     <title>SongScaffolder</title>
 </head>
 <body>
+    <div class="container">
+        <div class="jumbtron text-center">
+            <h1 class="logo display-4">SongScaffolder</h1>
+        </div>
+    </div>
+    <br>
     <div class="container">
         <div class="row">
             <div class="col-4 header-col">
@@ -30,12 +38,12 @@
             <div class="col-4 third-col"></div>
         </div>
 
-        <!-- INSTRUMENTS -->
+        <!-- CHORDS -->
         <div class="row first-row">
             <div class="col-4 first-col">
                 <div class="row">
                     <div class="col-7 text-right">
-                        <p class="center">Instruments</p>
+                        <p class="center">Chords</p>
                     </div>
                     <div class="col-2">
                         <label class="switch">
@@ -56,17 +64,17 @@
             <div class="col-4 third-col">
                 <div class="row">
                     <div class="col-2"><i class="fa fa-list"></i></div>
-                    <div class="col-10"><p class="get-help h3 text-center"><i class="fa fa-question-circle"></i></p></div>
+                    <div class="col-3"><p class="h3 text-center"><i class="fa fa-question-circle"></i></p></div>
                 </div>
             </div>
         </div>
 
-        <!-- TIME SIGNATURES -->
+        <!-- FEELS -->
         <div class="row first-row">
             <div class="col-4 first-col">
                 <div class="row">
                     <div class="col-7 text-right">
-                        <p class="center">Time Signatures</p>
+                        <p class="center">Feels</p>
                     </div>
                     <div class="col-2">
                         <label class="switch">
@@ -81,13 +89,13 @@
             </div>
             <div class="col-4 second-col d-flex justify-content-center" >
                 <form>
-                    <input type="text" class="input-quantity border-bottom text-center"><br><br>
+                    <input type="text" class="input-quantity border-bottom text-center" ><br><br>
                 </form>
             </div>
             <div class="col-4 third-col">
                 <div class="row">
                     <div class="col-2"><i class="fa fa-list"></i></div>
-                    <div class="col-10"><p class="get-help h3 text-center"><i class="fa fa-question-circle"></i></p></div>
+                    <div class="col-3"><p class="h3 text-center"><i class="fa fa-question-circle"></i></p></div>
                 </div>
             </div>
         </div>
@@ -118,17 +126,48 @@
             <div class="col-4 third-col">
                 <div class="row">
                     <div class="col-2"><i class="fa fa-list"></i></div>
-                    <div class="col-10"><p class="get-help h3 text-center"><i class="fa fa-question-circle"></i></p></div>
+                    <div class="col-3"><p class="h3 text-center"><i class="fa fa-question-circle"></i></p></div>
                 </div>
             </div>
         </div>
 
-        <!-- Feels -->
+        <!-- INFLUENCES -->
         <div class="row first-row">
             <div class="col-4 first-col">
                 <div class="row">
                     <div class="col-7 text-right">
-                        <p class="center">Feels</p>
+                        <p class="center">Influences</p>
+                    </div>
+                    <div class="col-2">
+                        <label class="switch">
+                            <input type="checkbox">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="col-3">
+                        <p class="get-help h3 text-center"><i class="fa fa-question-circle"></i></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4 second-col d-flex justify-content-center" >
+                <form>
+                    <input type="text" class="input-quantity border-bottom text-center"><br><br>
+                </form>
+            </div>
+            <div class="col-4 third-col">
+                <div class="row">
+                    <div class="col-2"><i class="fa fa-list"></i></div>
+                    <div class="col-3"><p class="h3 text-center"><i class="fa fa-question-circle"></i></p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- INSTRUMENTS -->
+        <div class="row first-row">
+            <div class="col-4 first-col">
+                <div class="row">
+                    <div class="col-7 text-right">
+                        <p class="center">Instruments</p>
                     </div>
                     <div class="col-2">
                         <label class="switch">
@@ -149,17 +188,17 @@
             <div class="col-4 third-col">
                 <div class="row">
                     <div class="col-2"><i class="fa fa-list"></i></div>
-                    <div class="col-10"><p class="get-help h3 text-center"><i class="fa fa-question-circle"></i></p></div>
+                    <div class="col-3"><p class="h3 text-center"><i class="fa fa-question-circle"></i></p></div>
                 </div>
             </div>
         </div>
 
-        <!-- Keys -->
+        <!-- KEY SIGNATURES -->
         <div class="row first-row">
             <div class="col-4 first-col">
                 <div class="row">
                     <div class="col-7 text-right">
-                        <p class="center">Keys</p>
+                        <p class="center">Key Signatures</p>
                     </div>
                     <div class="col-2">
                         <label class="switch">
@@ -180,12 +219,12 @@
             <div class="col-4 third-col">
                 <div class="row">
                     <div class="col-2"><i class="fa fa-list"></i></div>
-                    <div class="col-10"><p class="get-help h3 text-center"><i class="fa fa-question-circle"></i></p></div>
+                    <div class="col-3"><p class="h3 text-center"><i class="fa fa-question-circle"></i></p></div>
                 </div>
             </div>
         </div>
 
-        <!-- Moods -->
+        <!-- MOODS -->
         <div class="row first-row">
             <div class="col-4 first-col">
                 <div class="row">
@@ -211,17 +250,17 @@
             <div class="col-4 third-col">
                 <div class="row">
                     <div class="col-2"><i class="fa fa-list"></i></div>
-                    <div class="col-10"><p class="get-help h3 text-center"><i class="fa fa-question-circle"></i></p></div>
+                    <div class="col-3"><p class="h3 text-center"><i class="fa fa-question-circle"></i></p></div>
                 </div>
             </div>
         </div>
 
-        <!-- Influence -->
+        <!-- THEMES -->
         <div class="row first-row">
             <div class="col-4 first-col">
                 <div class="row">
                     <div class="col-7 text-right">
-                        <p class="center">Influence</p>
+                        <p class="center">Themes</p>
                     </div>
                     <div class="col-2">
                         <label class="switch">
@@ -242,7 +281,38 @@
             <div class="col-4 third-col">
                 <div class="row">
                     <div class="col-2"><i class="fa fa-list"></i></div>
-                    <div class="col-10"><p class="get-help h3 text-center"><i class="fa fa-question-circle"></i></p></div>
+                    <div class="col-3"><p class="h3 text-center"><i class="fa fa-question-circle"></i></p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TIME SIGNATURES -->
+        <div class="row first-row">
+            <div class="col-4 first-col">
+                <div class="row">
+                    <div class="col-7 text-right">
+                        <p class="center">Time Signatures</p>
+                    </div>
+                    <div class="col-2">
+                        <label class="switch">
+                            <input type="checkbox">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="col-3">
+                        <p class="get-help h3 text-center"><i class="fa fa-question-circle"></i></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4 second-col d-flex justify-content-center" >
+                <form>
+                    <input type="text" class="input-quantity border-bottom text-center" ><br><br>
+                </form>
+            </div>
+            <div class="col-4 third-col">
+                <div class="row">
+                    <div class="col-2"><i class="fa fa-list"></i></div>
+                    <div class="col-3"><p class="get-help h3 text-center"><i class="fa fa-question-circle"></i></p></div>
                 </div>
             </div>
         </div>

@@ -50,6 +50,17 @@ hr {
     border: 0px;
 }
 
+.logo {
+  font-family: 'Shrikhand', cursive;
+  margin-top: 20px;
+  color: white;
+  /* Prefix required. Even Firefox only supports the -webkit- prefix */
+  -webkit-text-stroke-width: 8px;
+  -webkit-text-stroke-color: var(--primary-green);
+  filter: drop-shadow(5px 5px 1px var(--primary-green));
+  paint-order: stroke fill;
+}
+
 /* Switch styling */
 
 .switch {
@@ -134,4 +145,6 @@ hr {
 .btn-scaffold{
   color: white;
   background-color: var(--primary-green);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 24px;
 }
