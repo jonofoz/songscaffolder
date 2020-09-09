@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load _extras %}
+{% block content %}
+<hr>
+<!-- Basic -->
+{% if depth == 1 %}
+    {% for k, v in field_data.items %}
+        {% with ""|addstr:field_name|addstr:"-"|addstr:k as dynamic_id %}
+            {% if v != 0 %}
+                <div class="row" id="{{ dynamic_id }}">
+                    <div class="col-6 first-col">{{ k }}</div>
+                    <div class="col-4 second-col d-flex justify-content-center"><p class="text-center" id="get-help-for-quantity">{{ v }}</p></div>
+                    <div class="col-2 third-col d-flex justify-content-center">
+                        <p id="delete-field_{{ dynamic_id }}">
+                            <a href="{% url 'delete' dynamic_id %}" class="btn btn-secondary btn-delete active" role="button" aria-pressed="true">Delete</a>
+                            <!-- <a onclick={{ func }} class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Primary link</a> -->
+                        </p>
+                    </div>
+                </div>
+            {% endif %}
+        {% endwith %}
+    {% endfor %}
+<!-- Time Signatures -->
+{% elif depth == 2 %}
+    {% for k, v in field_data.items %}
+        <div class="row" id="{{ dynamic_id }}">
+            <div class="col-12 first-col">{{ k }}</div>
+            {% for k_1, v_1 in v.items %}
+                <div class="col-8 first-col nested-config-1">{{ k_1 }}</div>
+                <div class="col-4 second-col d-flex justify-content-center"><p class="get-help text-center" id="get-help-for-quantity">{{ v_1 }}</p></div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="row last-row">
+    <div class="col-2">
+    </div>
+    <div class="col-8">
+        <button class="btn btn-lg btn-block btn-scaffold">Save changes</button>
+    </div>
+    <div class="col-2">
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="row">
+        <div class="col-4 header-col">
+            <div class="p-2 lead text-center">Randomize These!</div>
+        </div>
+        <div class="col-4 header-col">
+            <div class="p-2 lead text-center">I Want This Many.</div>
+        </div>
+        <div class="col-4 header-col">
+            <div class="p-2 lead text-center">Here's My Specs.</div>
+        </div>
+    </div>
+    <hr>
+
+    <div class="row zero-row">
+        <div class="col-4 first-col"></div>
+        <div class="col-4 second-col d-flex justify-content-center"><p class="get-help h3 text-center" id="get-help-for-quantity"><i class="fa fa-question-circle"></i></p></div>
+        <div class="col-4 third-col"></div>
+    </div>
+
+    {% if fields %}
+        {% for field in fields %}
+        <!-- CHORDS -->
+        <div class="row first-row">
+            <div class="col-4 first-col">
+                <div class="row">
+                    <div class="col-7 text-right">
+                        <p class="center">{{ field.title }}</p>
+                    </div>
+                    <div class="col-2">
+                        <label class="switch">
+                            <input type="checkbox" id="switch-include-{{ field.id }}">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="col-3">
+                        <p class="get-help h3 text-center"><i class="fa fa-question-circle" id="get-help-with-randomizing-{{ field.id }}"></i></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4 second-col d-flex justify-content-center" >
+                <form>
+                    <input type="text" class="input-quantity border-bottom text-center" id="quantity-for-{{ field.id }}"><br><br>
+                </form>
+            </div>
+            <div class="col-4 third-col">
+                <div class="row">
+                    <div class="col-2"><a class="fa fa-list" id="define-specs-for-{{ field.id }}" href="{% url 'config' field.id %}"></a></div>
+                    <div class="col-3"><p class="h3 text-center"><i class="fa fa-question-circle" id="get-help-with-specifying-{{ field.id }}"></i></p></div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="row last-row">
+        <div class="col-2">
+        </div>
+        <div class="col-8">
+            <button class="btn btn-lg btn-block btn-scaffold" data-toggle="modal" data-target=".bd-example-modal-lg">SCAFFOLD THAT SONG</button>
+        </div>
+        <div class="col-2">
+        </div>
+    </div>
+
+    <div class="container-fluid">
+    <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="jumbotron">
+                        <h4 class="display-4 text-center"> 12/08/19 </h4>
+                        <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                            <td>Chords</td>
+                            <td>5, aug, 7no3</td>
+                            </tr>
+                            <tr>
+                            <td>Feels</td>
+                            <td>Swingy, Moody, Bad</td>
+                            </tr>
+                            <tr>
+                            <td>Instruments</td>
+                            <td>Guitar, Piano, Flex</td>
+                            </tr>
+                        </tbody>
+                        </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
