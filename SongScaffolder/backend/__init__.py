@@ -8,7 +8,7 @@ from scaffolder import SongScaffolder
 # These will of course change with user input, but for now...
 attributes_to_use = {attr:True for attr in attributes_map.keys()}
 directives = {
-    "key_signatures": {
+    "key-signatures": {
         "use_spicy_modes": True,
         "include_generics": False
     }

@@ -4,8 +4,8 @@ attributes_map = {
     "GENRE": "genres",
     "INFLC": "influences",
     "INSTR": "instruments",
-    "KYSIG": "key_signatures",
+    "KYSIG": "key-signatures",
     "MOODS": "moods",
     "THEME": "themes",
-    "TMSIG": "time_signatures",
+    "TMSIG": "time-signatures",
 }

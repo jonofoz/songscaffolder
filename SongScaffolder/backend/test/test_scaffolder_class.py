@@ -12,7 +12,7 @@ class TestScaffolderClass(unittest.TestCase):
     def setUp(self):
         self.attributes_to_use = {attr:True for attr in attributes_map.keys()}
         self.directives = {
-            "key_signatures": {
+            "key-signatures": {
                 "use_spicy_modes": True,
                 "include_generics": False
             }

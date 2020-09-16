@@ -19,7 +19,7 @@
         "Guitar": 4,
         "Piano": 3
     },
-    "key_signatures":{
+    "key-signatures":{
         "roots": {
             "C": 5,
             "C#": 5
@@ -47,7 +47,7 @@
         "Western": 3,
         "Horror": 5,
     },
-    "time_signatures": {
+    "time-signatures": {
         "numerator": {
             "2":  2
         },
