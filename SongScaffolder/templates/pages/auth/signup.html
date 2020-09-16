@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% include 'bootstrap4/layout/help_text_and_errors.html' %}
+
+{% block title %}
+Sign Up
+{% endblock %}
+
+{% block content %}
+<h1 class="display-3">Sign Up</h1>
+<div class="">
+    <form action="{% url 'pages:signup' %}" class="form-group" method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <input type="submit" class="btn btn-primary btn-green btn-block" value="Sign Up">
+    </form>
+</div>
+{% endblock %}
