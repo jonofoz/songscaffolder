@@ -1,5 +1,6 @@
 :root {
     --primary-green: #4CD964;
+    --hover-green: #0e9446;
     --primary-grey: #3d3d3d;
 }
 
@@ -46,8 +47,16 @@ hr {
     color: rgb(36, 36, 36)
 }
 
-.input-quantity {
+.no-border {
     border: 0px;
+}
+
+.inherit-bg-color {
+  background-color: inherit !important;
+}
+
+.item-input {
+  width: 100%;
 }
 
 /* Switch styling */
@@ -131,11 +140,17 @@ hr {
   text-align: center;
 }
 
-.btn-scaffold{
+.btn-green{
   color: white;
   background-color: var(--primary-green);
+  border-color: var(--primary-green);
   font-family: 'Montserrat', sans-serif;
   font-size: 24px;
+}
+
+.btn-green:hover{
+  background-color: var(--hover-green);
+  border-color: var(--hover-green);
 }
 
 .btn-delete{
@@ -199,4 +214,56 @@ a:active {
 
 .footer a {
   color: var(--link);
+}
+
+.hello-user {
+  font-family: 'Grandstander', cursive;
+  font-size: 1.5em;
+  color: grey;
+  text-shadow: 3px 3px 3px rgba(99, 111, 128, 0.3);
+  transform: rotate(10deg);
+}
+
+.background-white {
+  background-color: white;
+}
+
+.background-grey {
+  background-color: rgb(241, 241, 241);
+}
+
+.config-key {
+  font-size: 1.5em;
+}
+
+.config-value {
+  font-size: 1.5em;
+}
+
+.config-header {
+  font-family: 'Shrikhand', cursive;
+  font-size: 2em;
+  color: white;
+  /* Prefix required. Even Firefox only supports the -webkit- prefix */
+  -webkit-text-stroke-width: 8px;
+  -webkit-text-stroke-color: var(--primary-grey);
+  paint-order: stroke fill;
+}
+
+.staged-for-deletion {
+  display: none !important;
+}
+
+.tooltip-inner {
+  background-color: var(--primary-grey);
+}
+
+/* This still needs work. */
+.tooltip-arrow {
+  background-color: var(--primary-grey);
+  border-top-color: #7abcff !important;
+}
+
+.tooltip-bold {
+  font-weight: 700;
 }
