@@ -1,6 +1,12 @@
+{% load static %}
+
 <div class="container">
     <div class="jumbtron text-center">
-       <a href="{% url 'index' %}" class="logo-link"> <h1 class="display-4 logo">SongScaffolder</h1></a>
+        <div class="row">
+            <div class="col-3"></div>
+            <div class="col-6"><a href="{% url 'pages:index' %}" class="logo-link"><h1 class="display-4 logo">SongScaffolder</h1></a></div>
+            <div class="col-3 container d-flex align-items-end hello-user">(Hi, {{ user }}!)</div>
+        </div>
     </div>
 </div>
 <br>
