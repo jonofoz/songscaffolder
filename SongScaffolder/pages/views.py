@@ -1,9 +1,11 @@
+import json
 import sys, os
 sys.path.append(os.path.join("..", ".."))
 from common.utils import connect_to_database
+from backend.scaffolder import SongScaffolder
 
 from django import forms
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth import login, logout, authenticate
@@ -96,4 +98,17 @@ def user_signup(request):
 
 @login_required
 def make_scaffold(request):
-    pass
+    directives = {
+        "key-signatures": {
+            "use_spicy_modes": True,
+            "include_generics": False
+        }
+    }
+
+    with SongScaffolder(
+        data=request.session["metadata"]["user_data"],
+        attributes=json.loads(request.GET["fields"]),
+        directives={}) as scaffolder:
+        pass
+        # return JsonResponse(scaffolder.get_json_results())
+    return JsonResponse({})
