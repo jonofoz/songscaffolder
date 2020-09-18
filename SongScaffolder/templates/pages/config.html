@@ -11,52 +11,44 @@
 <h1 class="text-center config-header">{{ ""|replace_dashes:field_name|title }}</h1>
 <hr>
 <!-- Basic -->
-{% if depth == 1 %}
-    <table class="table table-striped table-bordered">
-        <tbody>
-            {% for k, v in field_data.items %}
-            <!-- Replace with slugify I believe -->
-                {% with "tr-"|addstr:k as dynamic_id %}
-                    <tr class="config-row">
-                        <td style="width: 70%" ><input type="text" class="item-input no-border border-bottom inherit-bg-color" placeholder="Edit Me!" value="{{ k }}"></input></td>
-                        <td class="text-center d-flex justify-content-center">
-                            <ul class="pagination">
-                                {% for i in "12345"|make_list %}
-                                    <li class="page-item {% if i == ''|addstr:v  %} active {% endif %}"><p class="page-link" href="#">{{ i }}</p></li>
-                                {% endfor %}
-                            </ul>
-                        </td>
-                        <td style="width: 10%"><a href="#" class="btn btn-secondary btn-delete active d-flex justify-content-center" role="button" aria-pressed="true">Delete</a></td>
-                    </tr>
-                {% endwith %}
-            {% endfor %}
-        </tbody>
-    </table>
-    <button class="btn btn-primary btn-green btn-block" onclick="addItem('{{ field_name }}')">+</button>
-
-<!-- Time Signatures -->
-{% elif depth == 2 %}
-    {% for k, v in field_data.items %}
-        <div class="row" id="{{ dynamic_id }}">
-            <div class="col-12 first-col">{{ k }}</div>
-            {% for k_1, v_1 in v.items %}
-                <div class="col-8 first-col nested-config-1">{{ k_1 }}</div>
-                <div class="col-4 second-col d-flex justify-content-center"><p class="get-help text-center" id="get-help-for-quantity">{{ v_1 }}</p></div>
-            {% endfor %}
-        </div>
-    {% endfor %}
-{% endif %}
-
-<div class="row last-row">
-    <div class="col-2">
+<table class="table table-striped table-bordered">
+    <tbody>
+        {% for k, v in field_data.items %}
+        <!-- Replace with slugify I believe -->
+            {% with "tr-"|addstr:k as dynamic_id %}
+                <tr class="config-row">
+                    <td style="width: 70%" ><input type="text" class="item-input no-border border-bottom inherit-bg-color" placeholder="Edit Me!" value="{{ k }}"></input></td>
+                    <td class="text-center d-flex justify-content-center">
+                        <ul class="pagination">
+                            {% for i in "12345"|make_list %}
+                                <li class="page-item {% if i == ''|addstr:v  %} active {% endif %}"><p class="page-link" href="#">{{ i }}</p></li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td style="width: 10%"><a href="#" class="btn btn-secondary btn-delete active d-flex justify-content-center" role="button" aria-pressed="true">Delete</a></td>
+                </tr>
+            {% endwith %}
+        {% endfor %}
+    </tbody>
+</table>
+<div class="row">
+    <div class="col-10">
+        <button class="btn btn-primary btn-green btn-block" id="button-add-rows">+</button>
     </div>
-    <div class="col-8">
+    <div class="col-2">
+        <label for="how-many-to-add">Add this many new rows.</label>
+        <input type="text" id="how-many-to-add" class="no-border border-bottom text-center" placeholder=1>
+    </div>
+</div>
+<div class="row last-row">
+    <div class="col-6">
         <!-- <form action="{% url 'field:save-changes' field_name %}" method="GET">
             {% csrf_token %} -->
-            <button class="btn btn-lg btn-block btn-green" id="save-button" aria-pressed="true">Save Changes</a>
+            <button class="btn btn-lg btn-block btn-green" id="button-save" aria-pressed="true">Save Changes</a>
         <!-- </form> -->
     </div>
-    <div class="col-2">
+    <div class="col-6">
+        <button class="btn btn-lg btn-block btn-grey" id="button-delete-all" aria-pressed="true">Delete All</a>
     </div>
 </div>
 
@@ -66,6 +58,10 @@
 <script>
     // This is used for letting the Python backend know which field names need updating.
 
+    $(document).on("click", "#button-delete-all", function() {
+        $(".config-row").remove()
+        return false
+    })
     $(document).on("click", ".btn-delete", function() {
         $(this).parent().parent().remove()
         return false
@@ -100,6 +96,27 @@
             }
         })
     })
+
+    $("#button-add-rows").on("click", function() {
+        howMany = $("#how-many-to-add")
+        numRowsToAdd = howMany.val() != "" ? parseInt(howMany.val()) : 1;
+        tbody = $('tbody')
+        for (i=0; i < numRowsToAdd; i++) {
+        tbody.append(`
+                <tr class="config-row">
+                    <td style="width: 70%"><input type="text" class="item-input no-border border-bottom inherit-bg-color" placeholder="Edit Me!"></input></td>
+                    <td class="text-center d-flex justify-content-center">
+                        <ul class="pagination">
+                            {% for i in "12345"|make_list %}
+                                <li class="page-item {% if i == '3'  %} active {% endif %}"><p class="page-link" href="#">{{ i }}</p></li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td style="width: 10%"><a href="#" class="btn btn-secondary btn-delete active d-flex justify-content-center" role="button" aria-pressed="true">Delete</a></td>
+                </tr>
+            `)
+        }
+    });
 
     function addItem(){
         $('tbody').append(`
