@@ -104,11 +104,16 @@ def make_scaffold(request):
             "include_generics": False
         }
     }
-
+    attributes = {k:v["include"] for k,v in json.loads(request.GET["metadata"]).items()}
+    quantities = {k:v["quantity"] for k,v in json.loads(request.GET["metadata"]).items() if "quantity" in v}
     with SongScaffolder(
         data=request.session["metadata"]["user_data"],
-        attributes=json.loads(request.GET["fields"]),
+        attributes=attributes,
+        quantities=quantities,
         directives={}) as scaffolder:
-        pass
-        # return JsonResponse(scaffolder.get_json_results())
-    return JsonResponse({})
+        results = scaffolder.get_json_results()
+        if results == {}:
+            results = {"You selected nothing!": ["Please select a field to include."]}
+        else:
+            results = {k.replace("-", " ").title(): v for k, v in results.items()}
+        return JsonResponse(results)

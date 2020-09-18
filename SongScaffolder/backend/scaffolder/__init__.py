@@ -22,9 +22,10 @@ def _count_keys_in_dict(data):
     return total_keys
 
 class SongScaffolder(object):
-    def __init__(self, data={}, attributes={}, directives={}):
+    def __init__(self, data={}, quantities={}, attributes={}, directives={}):
         self.data = data
         self.attributes = attributes
+        self.quantities = quantities
         self.directives = directives
 
     def __enter__(self):
@@ -40,14 +41,15 @@ class SongScaffolder(object):
     def generate(self):
         self.song_data      = {}
         self.printable_data = []
-        for full_title in self.attributes:
-            # directives_to_use = self.directives[full_title] if full_title in self.directives else {}
-            directives_to_use = {}
-            # TODO: Replace r_int with value specified by user.
-            # TODO: Remove directives to generalize data format.
-            self.song_data[full_title] = self._generate(full_title, r_int(1,5), directives=directives_to_use)
-            # TODO: Remove printable_data.
-            # self.printable_data.append("{:16} {}".format(full_title.upper().replace("_", " "), self.song_data[attr]))
+        for full_title, truth_value in self.attributes.items():
+            if truth_value == True:
+                # directives_to_use = self.directives[full_title] if full_title in self.directives else {}
+                directives_to_use = {}
+                # TODO: Replace r_int with value specified by user.
+                # TODO: Remove directives to generalize data format.
+                self.song_data[full_title] = self._generate(full_title, int(self.quantities[full_title]), directives=directives_to_use)
+                # TODO: Remove printable_data.
+                # self.printable_data.append("{:16} {}".format(full_title.upper().replace("_", " "), self.song_data[attr]))
 
     # TODO: Remove print_results.
     def print_results(self):
@@ -57,7 +59,7 @@ class SongScaffolder(object):
         print("--------------------------------------\n")
 
     def get_json_results(self):
-        pass
+        return self.song_data
 
     def _generate(self, full_title, results_left=1, **directives):
 
@@ -85,36 +87,8 @@ class SongScaffolder(object):
             return [k for k in source_data.keys()]
 
         # TODO: Remove this check once data format is standardized.
-        if full_title in ["chords", "feels", "geners", "influences", "instruments", "moods", "themes"]:
-            while results_left > 0:
-                result = _pick_random(_get_subset(source_data))
-                results_left = _try_append_result(result, results, results_left)
-        else:
-            if attr == "TMSIG":
-                while results_left > 0:
-                    num_subset = _get_subset(source_data["numerator"])
-                    den_subset = _get_subset(source_data["denominator"])
-                    result = "{}/{}".format(_pick_random(num_subset), _pick_random(den_subset))
-                    results_left = _try_append_result(result, results, results_left)
+        while results_left > 0:
+            result = _pick_random(_get_subset(source_data))
+            results_left = _try_append_result(result, results, results_left)
 
-            if attr == "KYSIG":
-                while results_left > 0:
-                    # Use generic
-                    if full_title in directives \
-                    and "include_generics" in directives[full_title] \
-                    and r_int(1, 5) > 3:
-                        result = _pick_random(_get_subset(source_data["generic"]))
-                        results_left = _try_append_result(result, results, results_left)
-                    # Use root + mode
-                    else:
-                        heat_index = "spicy" \
-                            if full_title in directives \
-                            and "use_spicy_modes" in directives[full_title] \
-                            and r_int(1, 5) > 3 \
-                            else "mild"
-                        result = "{} {}".format( \
-                                _pick_random(_get_subset(source_data["roots"])),
-                                _pick_random(_get_subset(source_data["modes"][heat_index]))
-                        )
-                        results_left = _try_append_result(result, results, results_left)
         return results
