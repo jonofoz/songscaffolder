@@ -30,7 +30,9 @@ SongScaffolder
 
     {% if fields %}
         {% for field in fields %}
+            <!-- One whole row -->
             <div class="row first-row">
+                <!-- 1: The field name, the switch for it, and an info bubble -->
                 <div class="col-4 first-col">
                     <div class="row">
                         <div class="col-7 text-right">
@@ -43,18 +45,19 @@ SongScaffolder
                             </label>
                         </div>
                         <div class="col-3" >
-                            <!-- Generated markup by the plugin -->
                             <p class="get-help h3 text-center">
                                 <i class="fa fa-question-circle" class="get-help h3 text-center" data-toggle="tooltip" data-placement="right" data-html="true" title="{{ field.info }}" id="get-help-with-randomizing_{{ field.id }}"></i>
                             </p>
                         </div>
                     </div>
                 </div>
+                <!-- 2: The quantity form for the field -->
                 <div class="col-4 second-col d-flex justify-content-center" >
                     <form>
                         <input type="text" class="no-border border-bottom text-center" id="quantity-for_{{ field.id }}" placeholder=1><br><br>
                     </form>
                 </div>
+                <!-- 3: The specs and an info bubble for what they do -->
                 <div class="col-4 third-col">
                     <div class="row">
                         <div class="col-2"><a class="fa fa-list" id="define-specs-for_{{ field.id }}" href="{% url 'field:config' field.id %}"></a></div>
