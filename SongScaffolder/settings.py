@@ -10,19 +10,26 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
-from pathlib import Path
 import os
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+from . import BASE_DIR
 TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
 STATIC_DIR = os.path.join(BASE_DIR, "static")
+
+load_dotenv(dotenv_path=os.path.join(BASE_DIR, ".env"))
+try:
+    os.environ["DB_USER"]
+except KeyError:
+    # Handled by Travis for testing purposes.
+    raise
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '<secret-key>'
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -95,12 +102,12 @@ WSGI_APPLICATION = 'SongScaffolder.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
-        'NAME': '<db>',
+        'NAME': os.getenv("DB_NAME"),
         'CLIENT': {
-            'host': "mongodb+srv://<user>:<password>@<cluster>.mongodb.net/<db>?retryWrites=true&w=majority",
+            'host': f'mongodb+srv://{os.getenv("DB_USER")}:{os.getenv("DB_PASS")}@{os.getenv("DB_PATH")}?retryWrites=true&w=majority',
             'port': 27017,
-            'username': "<user>",
-            'password': "<password>",
+            'username': os.getenv("DB_USER"),
+            'password': os.getenv("DB_PASS"),
 
         }
     }
@@ -125,6 +132,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LOGIN_URL = "pages:login"
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
