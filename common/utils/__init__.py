@@ -16,7 +16,10 @@ except KeyError:
 def get_file_dir(filename):
     return os.path.dirname(os.path.abspath(os.path.basename(filename)))
 
-def connect_to_database():
+def connect_to_database(use_test_db=False):
     # Load user_data from MongoDB.
     cluster = MongoClient(f'mongodb+srv://{os.getenv("DB_USER")}:{os.getenv("DB_PASS")}@{os.getenv("DB_PATH")}?retryWrites=true&w=majority')
-    return cluster["<db-name>"]
+    if not use_test_db:
+        return cluster[os.getenv("DB_NAME")]
+    else:
+        return cluster["test_" + os.getenv("DB_NAME")]
