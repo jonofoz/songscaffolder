@@ -1,3 +1,8 @@
+import os, sys
+sys.path.append("..")
+
+from common.utils import connect_to_database
+
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from django.urls import reverse
@@ -29,6 +34,11 @@ class UserTestCase(TestCase):
         content_decoded = response.content.decode("utf-8")
         self.assertFalse(f"(Hi, {ss_test_user_name}!)" in content_decoded)
         self.assertTrue("<title>\n        \nSign Up\n\n    </title>" in content_decoded)
+        # TEST DB
+        db = connect_to_database(use_test_db=True)
+        user_cursor = db["user_data"].find({"username": ss_test_user_name})
+        self.assertEqual(user_cursor.count(), 1)
+        self.assertEqual(user_cursor[0]["user_data"], {'saved_scaffolds': [], 'scaffold_config': {}})
 
 
     def test_login(self):
@@ -45,7 +55,11 @@ class UserTestCase(TestCase):
         content_decoded = response.content.decode("utf-8")
         self.assertTrue("<title>\n        \nSongScaffolder\n\n    </title>" in content_decoded)
         self.assertTrue(f"(Hi, {ss_test_user_name}!)" in content_decoded)
-
+        # TEST DB
+        db = connect_to_database(use_test_db=True)
+        user_cursor = db["user_data"].find({"username": ss_test_user_name})
+        self.assertEqual(user_cursor.count(), 1)
+        self.assertEqual(user_cursor[0]["user_data"], {'saved_scaffolds': [], 'scaffold_config': {}})
 
     def test_make_scaffold(self):
         # logged_in = self.client.login(username=ss_test_user_name, password=ss_test_user_pass)
