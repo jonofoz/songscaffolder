@@ -132,6 +132,13 @@ hr {
     font-size: 20px;
   }
 
+
+  .fa-list-small {
+    padding: 6px;
+    margin-left: 12px;
+    font-size: 12px !important;
+  }
+
   .fa-question-circle {
     color: var(--primary-green);
     font-size: 34px;
@@ -271,16 +278,11 @@ a:active {
   display: none !important;
 }
 
-.tooltip-inner {
-  background-color: var(--primary-grey);
-}
-
-/* This still needs work. */
-.tooltip-arrow {
-  background-color: var(--primary-grey);
-  border-top-color: #7abcff !important;
-}
 
 .tooltip-bold {
   font-weight: 700;
+}
+
+#slogan {
+  font-size: 1.2em;
 }

@@ -13,7 +13,7 @@ from . import BASE_DIR
 
 load_dotenv(dotenv_path=os.path.join(BASE_DIR, ".env"))
 try:
-    os.environ["DB_USER"]
+    os.getenv("DB_USER")
 except KeyError:
     # Handled by Travis for testing purposes.
     pass

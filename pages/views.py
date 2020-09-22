@@ -31,7 +31,8 @@ def index(request):
         ("Themes", ""),
         ("Time Signatures", ""),
     ]:
-        info = f"Checking this will include random <span class='tooltip-bold'>{title.lower()}</span> into the scaffold. These are specified under <em>\"Here's My Specs.\"</em>"
+        info = f"Checking this will include random <span class='tooltip-bold'>{title.lower()}</span> into the scaffold. These are defined under the corresponding <a class=\"fa fa-list fa-list-small\"></a> button."
+        # info = f"Checking this will include random <span class='tooltip-bold'>{title.lower()}</span> into the scaffold. These are defined under <em>\"I Define Them Here.\"</em>"
         context["fields"].append ({
             "title": title,
             "id": title.replace(" ","-").lower(),

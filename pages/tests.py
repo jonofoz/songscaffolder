@@ -7,6 +7,9 @@ from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.test.utils import tag
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from selenium.webdriver.firefox.webdriver import WebDriver
+
 
 ss_test_user_name = "SongScaffolderTestUser"
 ss_test_user_pass = "IsThi$Pa$$w0rdGoodEnough4Ye"
@@ -65,4 +68,27 @@ class UserTestCase(TestCase):
         # logged_in = self.client.login(username=ss_test_user_name, password=ss_test_user_pass)
         # logged_in = self.client.force_login()
         # response = client.post("/make-scaffold/", {"metadata":}, content_type="application/json").json()
+        pass
+
+class SeleniumTests(StaticLiveServerTestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.selenium = WebDriver()
+        cls.selenium.implicitly_wait(10)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.selenium.quit()
+        super().tearDownClass()
+
+    def test_login(self):
+        # import pdb;pdb.set_trace()
+        # self.selenium.get('%s%s' % (self.live_server_url, '/login/'))
+        # username_input = self.selenium.find_element_by_name("username")
+        # username_input.send_keys('myuser')
+        # password_input = self.selenium.find_element_by_name("password")
+        # password_input.send_keys('secret')
+        # self.selenium.find_element_by_xpath('//input[@value="Log in"]').click()
         pass
