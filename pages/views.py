@@ -90,9 +90,17 @@ def user_signup(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             form.save(commit=True)
-            return redirect("pages:index")
+            user_data = {
+                "username": form.cleaned_data["username"],
+                "user_data": {
+                    "saved_scaffolds": [],
+                    "scaffold_config": {}
+                }
+            }
+            db = connect_to_database(use_test_db=request.POST.get("use_test_db", False))
+            db["user_data"].insert_one(user_data)
+            return redirect("pages:login")
         else:
-            # raise forms.ValidationError("Form was invalid.")
             print("Form was invalid.")
     else:
         form = UserCreationForm()
