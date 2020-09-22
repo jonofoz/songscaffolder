@@ -12,6 +12,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from .forms import LoginForm
+from .tests import ss_test_user_name
 
 # Create your views here.
 @login_required
@@ -50,7 +51,7 @@ def user_login(request):
             if authorized_user:
                 if authorized_user.is_active:
                     login(request, authorized_user)
-                    db = connect_to_database(use_test_db=request.POST.get("use_test_db", False))
+                    db = connect_to_database(use_test_db=True if username==ss_test_user_name else False)
                     user = db["auth_user"].find({"username": username})
                     # if user.count() > 0:
                     user = user[0]

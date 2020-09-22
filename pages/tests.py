@@ -15,13 +15,19 @@ ss_test_user_name = "SongScaffolderTestUser"
 ss_test_user_pass = "IsThi$Pa$$w0rdGoodEnough4Ye"
 # Create your tests here.
 
-class UserTestCase(TestCase):
+class BaseTestClass(TestCase):
     def setUp(self):
+        try:
+            user = User.objects.get(username=ss_test_user_name)
+            user.delete()
+        except:
+            pass
         self.user = User.objects.create_user(username=ss_test_user_name, password=ss_test_user_pass)
         self.user.save()
-
         self.client = Client()
 
+
+class UserTestCase(BaseTestClass):
     @tag('skip_setup')
     def test_signup(self):
         # GET
@@ -29,7 +35,7 @@ class UserTestCase(TestCase):
         self.assertEqual(response.resolver_match.func.__name__, "user_signup")
         self.assertEqual(response.status_code, 200)
         # POST
-        response = self.client.post(reverse("pages:signup"), {"username": ss_test_user_name, "password1": ss_test_user_pass, "password2": ss_test_user_pass, "use_test_db":True}, follow=True)
+        response = self.client.post(reverse("pages:signup"), {"username": ss_test_user_name, "password1": ss_test_user_pass, "password2": ss_test_user_pass}, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.redirect_chain, [])
         self.assertEqual(response.context["user"].username, '')
@@ -50,7 +56,7 @@ class UserTestCase(TestCase):
         self.assertEqual(response.resolver_match.func.__name__, "user_login")
         self.assertEqual(response.status_code, 200)
         # POST
-        response = self.client.post(reverse("pages:login"), {"username": ss_test_user_name, "password": ss_test_user_pass, "use_test_db":True}, follow=True)
+        response = self.client.post(reverse("pages:login"), {"username": ss_test_user_name, "password": ss_test_user_pass}, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.redirect_chain, [('/', 302)])
         self.assertEqual(   response.context["user"].username, ss_test_user_name)
@@ -70,7 +76,8 @@ class UserTestCase(TestCase):
         # response = client.post("/make-scaffold/", {"metadata":}, content_type="application/json").json()
         pass
 
-class SeleniumTests(StaticLiveServerTestCase):
+class SeleniumTests(BaseTestClass, StaticLiveServerTestCase):
+
 
     @classmethod
     def setUpClass(cls):
@@ -83,12 +90,15 @@ class SeleniumTests(StaticLiveServerTestCase):
         cls.selenium.quit()
         super().tearDownClass()
 
+    def setUp(self):
+        super(SeleniumTests, self).setUp()
+
     def test_login(self):
+        self.selenium.get('%s%s' % (self.live_server_url, '/login/'))
+        username_input = self.selenium.find_element_by_id("id_username")
+        username_input.send_keys(ss_test_user_name)
+        password_input = self.selenium.find_element_by_id("id_password")
+        password_input.send_keys(ss_test_user_pass)
+        self.selenium.find_element_by_id("login_form").submit()
+        self.assertEqual(self.selenium.title, "SongScaffolder")
         # import pdb;pdb.set_trace()
-        # self.selenium.get('%s%s' % (self.live_server_url, '/login/'))
-        # username_input = self.selenium.find_element_by_name("username")
-        # username_input.send_keys('myuser')
-        # password_input = self.selenium.find_element_by_name("password")
-        # password_input.send_keys('secret')
-        # self.selenium.find_element_by_xpath('//input[@value="Log in"]').click()
-        pass
