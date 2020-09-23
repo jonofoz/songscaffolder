@@ -20,6 +20,8 @@ class BaseTestClass(TestCase):
         try:
             user = User.objects.get(username=ss_test_user_name)
             user.delete()
+            db = connect_to_database(use_test_db=True)
+            db["user_data"].delete_many({"username": ss_test_user_name})
         except:
             pass
         self.user = User.objects.create_user(username=ss_test_user_name, password=ss_test_user_pass)
