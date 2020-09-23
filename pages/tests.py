@@ -15,15 +15,21 @@ ss_test_user_name = "SongScaffolderTestUser"
 ss_test_user_pass = "IsThi$Pa$$w0rdGoodEnough4Ye"
 # Create your tests here.
 
+def refresh_test_user():
+    try:
+        user = User.objects.get(username=ss_test_user_name)
+        user.delete()
+    except:
+        pass
+    try:
+        db = connect_to_database(use_test_db=True)
+        db["user_data"].delete_many({"username": ss_test_user_name})
+    except:
+        pass
+
 class BaseTestClass(TestCase):
     def setUp(self):
-        try:
-            user = User.objects.get(username=ss_test_user_name)
-            user.delete()
-            db = connect_to_database(use_test_db=True)
-            db["user_data"].delete_many({"username": ss_test_user_name})
-        except:
-            pass
+        refresh_test_user()
         self.user = User.objects.create_user(username=ss_test_user_name, password=ss_test_user_pass)
         self.user.save()
         self.client = Client()
