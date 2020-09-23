@@ -51,7 +51,7 @@ def user_login(request):
             if authorized_user:
                 if authorized_user.is_active:
                     login(request, authorized_user)
-                    db = connect_to_database(use_test_db=True if username==ss_test_user_name else False)
+                    db = connect_to_database(use_test_db=True if username.startswith(ss_test_user_name) else False)
                     user = db["auth_user"].find({"username": username})
                     # if user.count() > 0:
                     user = user[0]
@@ -92,18 +92,19 @@ def user_signup(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             form.save(commit=True)
+            username = form.cleaned_data["username"]
             user_data = {
-                "username": form.cleaned_data["username"],
+                "username": username,
                 "user_data": {
                     "saved_scaffolds": [],
                     "scaffold_config": {}
                 }
             }
-            db = connect_to_database(use_test_db=request.POST.get("use_test_db", False))
+            db = connect_to_database(use_test_db=True if username.startswith(ss_test_user_name) else False)
             db["user_data"].insert_one(user_data)
             return redirect("pages:login")
         else:
-            print("Form was invalid.")
+            raise forms.ValidationError("Form was invalid.")
     else:
         form = UserCreationForm()
     return render(request, "pages/auth/signup.html", {"form": form})
