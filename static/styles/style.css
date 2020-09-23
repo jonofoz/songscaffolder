@@ -2,11 +2,15 @@
     --primary-green: #4CD964;
     --hover-green: #0e9446;
     --primary-grey: #3d3d3d;
+    --light-grey: #ccc;
     --hover-grey: #1a1a1a;
+    --white: rgb(246, 246, 246);
 }
 
-body {
+html, body {
     font-family: 'Source Sans Pro', sans-serif;
+
+    background-color: var(--white);
 }
 
 hr {
@@ -57,7 +61,7 @@ hr {
 }
 
 .item-input {
-  width: 100%;
+  width: 100% !important;
   font-size: 1.5em !important;
 }
 
@@ -85,7 +89,7 @@ hr {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #ccc;
+    background-color: var(--light-grey);
     -webkit-transition: .4s;
     transition: .4s;
   }
@@ -97,7 +101,7 @@ hr {
     width: 28px;
     left: 3px;
     bottom: 3px;
-    background-color: white;
+    background-color: var(--white);
     -webkit-transition: .4s;
     transition: .4s;
   }
@@ -124,12 +128,18 @@ hr {
   }
 
   .fa-list {
-    color: white;
+    color: var(--white);
     background-color: var(--primary-grey);
     padding: 10px;
-    margin-left: 20px;
     border-radius: 50px;
     font-size: 20px;
+  }
+
+  .fa-list-tooltip {
+    padding: 6px;
+    margin: 0px 5px 0px 5px;
+    border-radius: 50px;
+    font-size: 12px;
   }
 
   .fa-question-circle {
@@ -138,12 +148,12 @@ hr {
     bottom: 10px;
   }
 
-.center{
-  text-align: center;
-}
+  .center{
+    text-align: center;
+  }
 
 .btn-green{
-  color: white;
+  color: var(--white);
   background-color: var(--primary-green);
   border-color: var(--primary-green);
   font-family: 'Montserrat', sans-serif;
@@ -151,13 +161,13 @@ hr {
 }
 
 .btn-green:hover{
-  color: white;
+  color: var(--white);
   background-color: var(--hover-green);
   border-color: var(--hover-green);
 }
 
 .btn-grey{
-  color: white;
+  color: var(--white);
   background-color: var(--primary-grey);
   border-color: var(--primary-grey);
   font-family: 'Montserrat', sans-serif;
@@ -165,7 +175,7 @@ hr {
 }
 
 .btn-grey:hover{
-  color: white;
+  color: var(--white);
   background-color: var(--hover-grey);
   border-color: var(--hover-grey);
 }
@@ -180,7 +190,7 @@ hr {
 .logo {
   font-family: 'Shrikhand', cursive;
   margin-top: 20px;
-  color: white;
+  color: var(--white);
   /* Prefix required. Even Firefox only supports the -webkit- prefix */
   -webkit-text-stroke-width: 8px;
   -webkit-text-stroke-color: var(--primary-green);
@@ -201,16 +211,16 @@ hr {
 }
 
 a:link, a:hover, a:active {
-  color: white;
+  color: var(--white);
   text-decoration: none;
 }
 
 a:hover {
-  color: white;
+  color: var(--white);
 }
 
 a:active {
-  color: white;
+  color: var(--white);
 }
 
 .hidden {
@@ -242,7 +252,7 @@ a:active {
 }
 
 .background-white {
-  background-color: white;
+  background-color: var(--white);
 }
 
 .background-grey {
@@ -260,7 +270,7 @@ a:active {
 .config-header {
   font-family: 'Shrikhand', cursive;
   font-size: 2em;
-  color: white;
+  color: var(--white);
   /* Prefix required. Even Firefox only supports the -webkit- prefix */
   -webkit-text-stroke-width: 8px;
   -webkit-text-stroke-color: var(--primary-grey);
@@ -271,16 +281,41 @@ a:active {
   display: none !important;
 }
 
-.tooltip-inner {
-  background-color: var(--primary-grey);
+.field-form {
+  background-color: var(--white);
+  border-color: var(--light-grey) !important;
+  font-size: 1.2em;
+  width: inherit;
 }
 
-/* This still needs work. */
-.tooltip-arrow {
-  background-color: var(--primary-grey);
-  border-top-color: #7abcff !important;
+.field-form:hover {
+  border-color: var(--primary-grey) !important;
 }
 
-.tooltip-bold {
-  font-weight: 700;
+.field-form::placeholder {
+  color: var(--primary-grey);
+}
+
+textarea:focus, input:focus{
+  outline: none;
+}
+
+textarea:hover{
+  border-color: var(--primary-grey) !important;
+}
+
+.page-item.active .page-link {
+    z-index: 3;
+    color: var(--white) !important;
+    background-color: var(--primary-green);
+    border-color: #ddd !important;
+}
+.page-link.active {
+  color: var(--white) !important;
+}
+
+.page-link {
+  color: var(--primary-green) !important;
+  margin-bottom: 0px;
+  font-size: 1.2em;
 }

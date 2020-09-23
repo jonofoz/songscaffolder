@@ -17,7 +17,7 @@
         <!-- Replace with slugify I believe -->
             {% with "tr-"|addstr:k as dynamic_id %}
                 <tr class="config-row">
-                    <td style="width: 70%" ><input type="text" class="item-input no-border border-bottom inherit-bg-color" placeholder="Edit Me!" value="{{ k }}"></input></td>
+                    <td style="width: 70%" ><input type="text" class="item-input no-border border-bottom field-form inherit-bg-color" placeholder="Edit Me!" value="{{ k }}"></input></td>
                     <td class="text-center d-flex justify-content-center">
                         <ul class="pagination">
                             {% for i in "12345"|make_list %}
@@ -37,7 +37,7 @@
     </div>
     <div class="col-2">
         <label for="how-many-to-add">Add this many new rows.</label>
-        <input type="text" id="how-many-to-add" class="no-border border-bottom text-center" placeholder=1>
+        <input type="text" id="how-many-to-add" class="no-border border-bottom field-form text-center" placeholder=1>
     </div>
 </div>
 <div class="row last-row">
