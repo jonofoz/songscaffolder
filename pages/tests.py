@@ -13,7 +13,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.test.utils import tag
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from selenium.webdriver.firefox.webdriver import WebDriver
+from selenium.webdriver.firefox.webdriver import WebDriver as WebDriverFirefox
 
 ss_test_user_name = "SongScaffolderTestUser"
 ss_test_user_pass = "IsThi$Pa$$w0rdGoodEnough4Ye"
@@ -108,12 +108,12 @@ class UserTestCase(BaseTestClass):
         # response = client.post("/make-scaffold/", {"metadata":}, content_type="application/json").json()
         pass
 
-class SeleniumTests(BaseTestClass, StaticLiveServerTestCase):
+class SeleniumTestsFirefox(BaseTestClass, StaticLiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.selenium = WebDriver()
+        cls.selenium = WebDriverFirefox()
         cls.selenium.implicitly_wait(10)
 
     @classmethod
@@ -122,7 +122,7 @@ class SeleniumTests(BaseTestClass, StaticLiveServerTestCase):
         super().tearDownClass()
 
     def setUp(self):
-        super(SeleniumTests, self).setUp()
+        super(SeleniumTestsFirefox, self).setUp()
 
     def test_login(self):
         self.selenium.get('%s%s' % (self.live_server_url, '/login/'))
