@@ -91,6 +91,7 @@ SongScaffolder
 
                         </tbody>
                     </table>
+                    <div id="what-the-heck-section"></div>
                 </div>
             </div>
         </div>
@@ -104,6 +105,8 @@ SongScaffolder
             // First, we'll clear any old scaffold results.
             tbody = $("tbody")
             tbody.children().remove()
+            sectionWTH = $("#what-the-heck-section")
+            sectionWTH.children().remove()
 
             metadata = {}
             fieldsToInclude = $('input[type="checkbox"]')
@@ -139,7 +142,21 @@ SongScaffolder
                                     <td>${value.join(', ')}</td>
                                 </tr>
                             `
-                        )
+                        );
+                    }
+                    if (Object.entries(data)[0][0] != "You selected nothing!") {
+                        $("#what-the-heck-section").append(`
+                        <br>
+                        <div class="row">
+                            <div class="col-3">
+                            </div>
+                            <div class="col-6 d-flex justify-content-center">
+                                <a type="button" id="btn-what-the-heck" class="btn btn-grey btn-block btn-small" href="{% url 'pages:what-the-heck' %}">What the heck?</a>
+                            </div>
+                            <div class="col-3">
+                            </div>
+                        </div>
+                        `)
                     }
                 },
                 failure: function(data){
