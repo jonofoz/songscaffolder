@@ -2,12 +2,14 @@
     --primary-green: #4CD964;
     --hover-green: #0e9446;
     --primary-grey: #3d3d3d;
+    --light-grey: #ccc;
     --hover-grey: #1a1a1a;
     --white: rgb(246, 246, 246);
 }
 
 html, body {
     font-family: 'Source Sans Pro', sans-serif;
+
     background-color: var(--white);
 }
 
@@ -59,7 +61,7 @@ hr {
 }
 
 .item-input {
-  width: 100%;
+  width: 100% !important;
   font-size: 1.5em !important;
 }
 
@@ -87,7 +89,7 @@ hr {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #ccc;
+    background-color: var(--light-grey);
     -webkit-transition: .4s;
     transition: .4s;
   }
@@ -278,6 +280,42 @@ a:active {
 .staged-for-deletion {
   display: none !important;
 }
+
 .field-form {
   background-color: var(--white);
+  border-color: var(--light-grey) !important;
+  font-size: 1.2em;
+  width: inherit;
+}
+
+.field-form:hover {
+  border-color: var(--primary-grey) !important;
+}
+
+.field-form::placeholder {
+  color: var(--primary-grey);
+}
+
+textarea:focus, input:focus{
+  outline: none;
+}
+
+textarea:hover{
+  border-color: var(--primary-grey) !important;
+}
+
+.page-item.active .page-link {
+    z-index: 3;
+    color: var(--white) !important;
+    background-color: var(--primary-green);
+    border-color: #ddd !important;
+}
+.page-link.active {
+  color: var(--white) !important;
+}
+
+.page-link {
+  color: var(--primary-green) !important;
+  margin-bottom: 0px;
+  font-size: 1.2em;
 }
