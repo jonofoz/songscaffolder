@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.test.utils import tag
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.webdriver.firefox.webdriver import WebDriver
-
+import time
 
 ss_test_user_name = "SongScaffolderTestUser"
 ss_test_user_pass = "IsThi$Pa$$w0rdGoodEnough4Ye"
@@ -100,5 +100,5 @@ class SeleniumTests(BaseTestClass, StaticLiveServerTestCase):
         password_input = self.selenium.find_element_by_id("id_password")
         password_input.send_keys(ss_test_user_pass)
         self.selenium.find_element_by_id("login_form").submit()
+        time.sleep(5)
         self.assertEqual(self.selenium.title, "SongScaffolder")
-        # import pdb;pdb.set_trace()
