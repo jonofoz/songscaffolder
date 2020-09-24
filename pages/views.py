@@ -42,41 +42,40 @@ def index(request):
     return render(request, 'pages/index.html', context=context)
 
 def user_login(request):
+    if request.user.is_authenticated:
+        return redirect(reverse('pages:index'))
     if request.method == "POST":
         form = LoginForm(data=request.POST)
         if form.is_valid():
+            authorized_user = form.login(request)
+            login(request, authorized_user)
             username = form.cleaned_data["username"]
             password = form.cleaned_data["password"]
-            authorized_user = authenticate(username=username, password=password)
-            if authorized_user:
-                if authorized_user.is_active:
-                    login(request, authorized_user)
-                    db = connect_to_database(use_test_db=True if username.startswith(ss_test_user_name) else False)
-                    user = db["auth_user"].find({"username": username})
-                    # if user.count() > 0:
-                    user = user[0]
-                    user_data_cursor = db["user_data"].find({"id": user["id"]})
+            db = connect_to_database(use_test_db=True if username.startswith(ss_test_user_name) else False)
+            user = db["auth_user"].find({"username": username})
+            # if user.count() > 0:
+            user = user[0]
+            user_data_cursor = db["user_data"].find({"id": user["id"]})
 
-                    def remove_mongodb_id(d):
-                        return {k: v for k, v in d.items() if k != "_id"}
+            def remove_mongodb_id(d):
+                return {k: v for k, v in d.items() if k != "_id"}
 
-                    if user_data_cursor.count() > 0:
-                        user_data = remove_mongodb_id(user_data_cursor[0])
-                    else:
-                        user_data = {
-                            "username": user["username"],
-                            "user_data": {
-                                "saved_scaffolds": [],
-                                "scaffold_config": {}
-                            }
-                        }
-                        db["user_data"].insert_one(user_data)
-                    request.session["metadata"] = remove_mongodb_id(user_data)
-                    request.session.save()
-                    return HttpResponseRedirect(reverse('pages:index'))
-                else:
-                    pass
-
+            if user_data_cursor.count() > 0:
+                user_data = remove_mongodb_id(user_data_cursor[0])
+            else:
+                user_data = {
+                    "username": user["username"],
+                    "user_data": {
+                        "saved_scaffolds": [],
+                        "scaffold_config": {}
+                    }
+                }
+                db["user_data"].insert_one(user_data)
+            request.session["metadata"] = remove_mongodb_id(user_data)
+            request.session.save()
+            return HttpResponseRedirect(reverse('pages:index'))
+        else:
+            pass
     else:
         form = LoginForm()
 
