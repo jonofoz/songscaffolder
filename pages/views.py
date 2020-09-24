@@ -57,9 +57,9 @@ def user_login(request):
             user = user[0]
             user_data_cursor = db["user_data"].find({"id": user["id"]})
 
+            import pdb;pdb.set_trace()
             def remove_mongodb_id(d):
                 return {k: v for k, v in d.items() if k != "_id"}
-
             if user_data_cursor.count() > 0:
                 user_data = remove_mongodb_id(user_data_cursor[0])
             else:

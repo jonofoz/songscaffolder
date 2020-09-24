@@ -2,21 +2,50 @@ import os
 import sys
 import hashlib
 import time
+import json
+import requests
 from random import randint
 from datetime import datetime
-sys.path.append("..")
 
+sys.path.append("..")
 from common.utils import connect_to_database
+
+from selenium.webdriver.firefox.webdriver import WebDriver as WebDriverFirefox
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.test.utils import tag
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from selenium.webdriver.firefox.webdriver import WebDriver as WebDriverFirefox
+
 
 ss_test_user_name = "SongScaffolderTestUser"
 ss_test_user_pass = "IsThi$Pa$$w0rdGoodEnough4Ye"
+example_saved_scaffolds = []
+example_scaffold_config = {
+    "chords": {
+        "5": 3,
+        "Maj7": 5,
+        "m9": 4,
+        "aug7": 3,
+        "Elektra": 5
+    },
+    "Genres": {
+        "Hip-Hop": 4,
+        "Ambient": 2,
+        "Lo-Fi": 5
+    },
+    "Instruments": {
+        "Guitar": 4,
+        "Piano": 3,
+        "Kontakt": 5,
+        "Serum": 5
+    }
+}
 # Create your tests here.
 
 def generate_test_username():
@@ -53,10 +82,9 @@ class BaseTestClass(TestCase):
         self.user = User.objects.create_user(username=self.username, password=ss_test_user_pass)
         self.user.save()
 
-    @classmethod
-    def tearDownClass(cls):
+    def tearDown(self):
         clear_test_data()
-        super().tearDownClass()
+
 
 class UserTestCase(BaseTestClass):
 
@@ -115,6 +143,7 @@ class SeleniumTestsFirefox(BaseTestClass, StaticLiveServerTestCase):
         super().setUpClass()
         cls.selenium = WebDriverFirefox()
         cls.selenium.implicitly_wait(10)
+        cls.actionchains = ActionChains(cls.selenium)
 
     @classmethod
     def tearDownClass(cls):
@@ -122,14 +151,56 @@ class SeleniumTestsFirefox(BaseTestClass, StaticLiveServerTestCase):
         super().tearDownClass()
 
     def setUp(self):
-        super(SeleniumTestsFirefox, self).setUp()
+        super().setUp()
 
-    def test_login(self):
+    def tearDown(self):
+        super().tearDown()
+        self.clear_test_user_data()
+
+    def login(self):
         self.selenium.get('%s%s' % (self.live_server_url, '/login/'))
         username_input = self.selenium.find_element_by_id("id_username")
         username_input.send_keys(self.username)
         password_input = self.selenium.find_element_by_id("id_password")
         password_input.send_keys(ss_test_user_pass)
         self.selenium.find_element_by_id("login_form").submit()
-        time.sleep(5)
-        self.assertEqual(self.selenium.title, "SongScaffolder")
+        WebDriverWait(self.selenium, 5).until(
+            EC.title_is("SongScaffolder")
+        )
+
+    def update_test_user_data(self):
+        db = connect_to_database(use_test_db=True)
+        db["user_data"].update_one({"username": self.username}, {"$set": {f'user_data.scaffold_config': example_scaffold_config}})
+
+    def clear_test_user_data(self):
+        db = connect_to_database(use_test_db=True)
+        db["user_data"].delete_many({"username": {"$regex": "^SongScaffolderTestUser"}})
+
+    def scroll_to(self, element):
+        self.selenium.execute_script("arguments[0].scrollIntoView();", element)
+
+    def test_login(self):
+        self.login()
+        self.assertTrue(
+            WebDriverWait(self.selenium, 5).until(
+                EC.title_is("SongScaffolder")
+            )
+        )
+
+
+    def test_cosmetic_things(self):
+        self.login()
+
+        # Test hovering over help buttons
+        for element_id, expected_text in [
+            ("get-help-for-fields", "Checking these will include random selections of the corresponding field into the scaffold. These selections can be specified by clicking the appropriate button."),
+            ("get-help-for-quantities", "These determine how many items from the corresponding field you want to include."),
+            ("get-help-for-specifications", "Clicking these will allow you to specify the selections for the corresponding field.")
+        ]:
+            help_bubble = self.selenium.find_element_by_id(element_id)
+            self.actionchains.move_to_element(help_bubble).perform()
+            self.assertTrue(
+            WebDriverWait(self.selenium, 5).until(
+                    EC.text_to_be_present_in_element((By.CLASS_NAME, "tooltip"), expected_text)
+                )
+            )
