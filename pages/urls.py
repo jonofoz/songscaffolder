@@ -10,4 +10,5 @@ urlpatterns = [
     path("logout/", views.user_logout, name="logout"),
     path("signup/", views.user_signup, name="signup"),
     path("make-scaffold/", views.make_scaffold, name="make-scaffold"),
+    path("heck/", views.what_the_heck, name="what-the-heck"),
 ]

@@ -123,3 +123,7 @@ def make_scaffold(request):
         else:
             results = {k.replace("-", " ").title(): v for k, v in results.items()}
         return JsonResponse(results)
+
+@login_required
+def what_the_heck(request):
+    return render(request, "pages/what-the-heck.html", )
