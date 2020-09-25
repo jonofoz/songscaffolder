@@ -36,6 +36,7 @@ def config(request, field_name):
             "field_name": field_name,
             "field_data": field_data
         }
+        return render(request, "pages/config.html", context)
     else:
         new_field_data = json.loads(request.POST["field_data"])
         db = connect_to_database(use_test_db=True if request.session["metadata"]["username"].startswith(ss_test_user_name) else False)
@@ -43,7 +44,7 @@ def config(request, field_name):
         db["user_data"].update_one({"username": username}, {"$set": {f'user_data.scaffold_config.{field_name}': new_field_data}})
         request.session["metadata"]["user_data"]["scaffold_config"][field_name] = new_field_data
         request.session.save()
-    return render(request, "pages/config.html", context=context)
+        return redirect("pages:index")
 
 
 @login_required
