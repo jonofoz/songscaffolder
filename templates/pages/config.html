@@ -21,7 +21,7 @@
                     <td class="text-center d-flex justify-content-center">
                         <ul class="pagination">
                             {% for i in "12345"|make_list %}
-                                <li class="page-item {% if i == ''|addstr:v  %} active {% endif %}"><p class="page-link" href="#">{{ i }}</p></li>
+                                <li class="page-item{% if i == ''|addstr:v  %} active {% endif %}"><p class="page-link" href="#">{{ i }}</p></li>
                             {% endfor %}
                         </ul>
                     </td>
@@ -42,10 +42,7 @@
 </div>
 <div class="row last-row">
     <div class="col-6">
-        <!-- <form action="{% url 'field:save-changes' field_name %}" method="GET">
-            {% csrf_token %} -->
-            <button class="btn btn-lg btn-block btn-green" id="button-save" aria-pressed="true">Save Changes</a>
-        <!-- </form> -->
+        <button class="btn btn-lg btn-block btn-green" id="button-save" aria-pressed="true">Save Changes</a>
     </div>
     <div class="col-6">
         <button class="btn btn-lg btn-block btn-grey" id="button-delete-all" aria-pressed="true">Delete All</a>
@@ -87,13 +84,22 @@
             }
             newConfigData[key] = value
         }
-        jsonString = JSON.stringify(newConfigData)
         $.ajax({
             type: "POST",
-            url: "{% url 'field:save-changes' field_name %}",
+            url: "{% url 'field:config' field_name %}",
+            dataType: "json",
             data: {
-                "field_data": jsonString,
-            }
+                "field_data": JSON.stringify(newConfigData),
+            },
+            success: function(){
+                top.location.href = "{% url 'pages:login' %}"
+            },
+            failure: function(){
+                top.location.href = "{% url 'pages:login' %}"
+            },
+            error: function(){
+                top.location.href = "{% url 'pages:login' %}"
+            },
         })
     })
 
@@ -108,7 +114,7 @@
                     <td class="text-center d-flex justify-content-center">
                         <ul class="pagination">
                             {% for i in "12345"|make_list %}
-                                <li class="page-item {% if i == '3'  %} active {% endif %}"><p class="page-link" href="#">{{ i }}</p></li>
+                                <li class="page-item{% if i == '3'  %} active {% endif %}"><p class="page-link" href="#">{{ i }}</p></li>
                             {% endfor %}
                         </ul>
                     </td>
@@ -125,7 +131,7 @@
                 <td class="text-center d-flex justify-content-center">
                     <ul class="pagination">
                         {% for i in "12345"|make_list %}
-                            <li class="page-item {% if i == '3'  %} active {% endif %}"><p class="page-link" href="#">{{ i }}</p></li>
+                            <li class="page-item{% if i == '3'  %} active {% endif %}"><p class="page-link" href="#">{{ i }}</p></li>
                         {% endfor %}
                     </ul>
                 </td>

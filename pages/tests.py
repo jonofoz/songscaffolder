@@ -2,10 +2,13 @@ import os
 import sys
 import hashlib
 import time
+import json
+import requests
 from random import randint
 from datetime import datetime
-sys.path.append("..")
+from lxml import html
 
+sys.path.append("..")
 from common.utils import connect_to_database
 
 from django.test import TestCase, Client
@@ -13,10 +16,30 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.test.utils import tag
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from selenium.webdriver.firefox.webdriver import WebDriver as WebDriverFirefox
 
 ss_test_user_name = "SongScaffolderTestUser"
 ss_test_user_pass = "IsThi$Pa$$w0rdGoodEnough4Ye"
+example_saved_scaffolds = []
+example_scaffold_config = {
+    "chords": {
+        "5": 3,
+        "Maj7": 5,
+        "m9": 4,
+        "aug7": 3,
+        "Elektra": 5
+    },
+    "Genres": {
+        "Hip-Hop": 4,
+        "Ambient": 2,
+        "Lo-Fi": 5
+    },
+    "Instruments": {
+        "Guitar": 4,
+        "Piano": 3,
+        "Kontakt": 5,
+        "Serum": 5
+    }
+}
 # Create your tests here.
 
 def generate_test_username():
@@ -53,10 +76,9 @@ class BaseTestClass(TestCase):
         self.user = User.objects.create_user(username=self.username, password=ss_test_user_pass)
         self.user.save()
 
-    @classmethod
-    def tearDownClass(cls):
+    def tearDown(self):
         clear_test_data()
-        super().tearDownClass()
+
 
 class UserTestCase(BaseTestClass):
 
@@ -102,34 +124,33 @@ class UserTestCase(BaseTestClass):
         self.assertEqual(user_cursor.count(), 1)
         self.assertEqual(user_cursor[0]["user_data"], {'saved_scaffolds': [], 'scaffold_config': {}})
 
+
     def test_make_scaffold(self):
-        # logged_in = self.client.login(username=self.username, password=ss_test_user_pass)
-        # logged_in = self.client.force_login()
-        # response = client.post("/make-scaffold/", {"metadata":}, content_type="application/json").json()
-        pass
-
-class SeleniumTestsFirefox(BaseTestClass, StaticLiveServerTestCase):
-
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        cls.selenium = WebDriverFirefox()
-        cls.selenium.implicitly_wait(10)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.selenium.quit()
-        super().tearDownClass()
-
-    def setUp(self):
-        super(SeleniumTestsFirefox, self).setUp()
-
-    def test_login(self):
-        self.selenium.get('%s%s' % (self.live_server_url, '/login/'))
-        username_input = self.selenium.find_element_by_id("id_username")
-        username_input.send_keys(self.username)
-        password_input = self.selenium.find_element_by_id("id_password")
-        password_input.send_keys(ss_test_user_pass)
-        self.selenium.find_element_by_id("login_form").submit()
-        time.sleep(5)
-        self.assertEqual(self.selenium.title, "SongScaffolder")
+        response = self.client.post(reverse("pages:login"), {"username": self.username, "password": ss_test_user_pass}, follow=True)
+        # GET
+        response = self.client.get("/config/chords")
+        self.assertEqual(response.resolver_match.func.__name__, "config")
+        self.assertEqual(response.status_code, 200)
+        # POST
+        response = self.client.post("/config/chords", {"field_data": json.dumps(example_scaffold_config["chords"])}, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.redirect_chain, [('/', 302)])
+        content_decoded = response.content.decode("utf-8")
+        self.assertTrue("<title>\n        \nSongScaffolder\n\n    </title>" in content_decoded)
+        # GET (Checking if results were actually saved)
+        response = self.client.get("/config/chords")
+        tree = html.fromstring(response.content)
+        keys_values = [(k,v) for k,v in example_scaffold_config["chords"].items()]
+        keys = tree.xpath("//input[@placeholder='Edit Me!']")
+        values = tree.xpath("//li[contains(@class, 'page-item') and contains(@class, 'active')]")
+        self.assertEqual(len(keys), 5)
+        self.assertEqual(len(values), 5)
+        for i, k_v in enumerate(keys_values):
+            k, v = k_v
+            self.assertEqual(keys[i].value, k)
+            self.assertEqual(int(values[i].text_content()), v)
+        # TEST DB
+        db = connect_to_database(use_test_db=True)
+        user_cursor = db["user_data"].find({"username": self.username})
+        self.assertEqual(user_cursor.count(), 1)
+        self.assertEqual(user_cursor[0]["user_data"], {'saved_scaffolds': [], 'scaffold_config': {'chords': {'5': 3, 'Maj7': 5, 'm9': 4, 'aug7': 3, 'Elektra': 5}}})
