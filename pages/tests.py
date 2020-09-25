@@ -2,10 +2,12 @@ import os
 import sys
 import hashlib
 import time
+import json
+import requests
 from random import randint
 from datetime import datetime
-sys.path.append("..")
 
+sys.path.append("..")
 from common.utils import connect_to_database
 
 from django.test import TestCase, Client
@@ -13,10 +15,30 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.test.utils import tag
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from selenium.webdriver.firefox.webdriver import WebDriver as WebDriverFirefox
 
 ss_test_user_name = "SongScaffolderTestUser"
 ss_test_user_pass = "IsThi$Pa$$w0rdGoodEnough4Ye"
+example_saved_scaffolds = []
+example_scaffold_config = {
+    "chords": {
+        "5": 3,
+        "Maj7": 5,
+        "m9": 4,
+        "aug7": 3,
+        "Elektra": 5
+    },
+    "Genres": {
+        "Hip-Hop": 4,
+        "Ambient": 2,
+        "Lo-Fi": 5
+    },
+    "Instruments": {
+        "Guitar": 4,
+        "Piano": 3,
+        "Kontakt": 5,
+        "Serum": 5
+    }
+}
 # Create your tests here.
 
 def generate_test_username():
@@ -53,10 +75,9 @@ class BaseTestClass(TestCase):
         self.user = User.objects.create_user(username=self.username, password=ss_test_user_pass)
         self.user.save()
 
-    @classmethod
-    def tearDownClass(cls):
+    def tearDown(self):
         clear_test_data()
-        super().tearDownClass()
+
 
 class UserTestCase(BaseTestClass):
 
@@ -107,29 +128,3 @@ class UserTestCase(BaseTestClass):
         # logged_in = self.client.force_login()
         # response = client.post("/make-scaffold/", {"metadata":}, content_type="application/json").json()
         pass
-
-class SeleniumTestsFirefox(BaseTestClass, StaticLiveServerTestCase):
-
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        cls.selenium = WebDriverFirefox()
-        cls.selenium.implicitly_wait(10)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.selenium.quit()
-        super().tearDownClass()
-
-    def setUp(self):
-        super(SeleniumTestsFirefox, self).setUp()
-
-    def test_login(self):
-        self.selenium.get('%s%s' % (self.live_server_url, '/login/'))
-        username_input = self.selenium.find_element_by_id("id_username")
-        username_input.send_keys(self.username)
-        password_input = self.selenium.find_element_by_id("id_password")
-        password_input.send_keys(ss_test_user_pass)
-        self.selenium.find_element_by_id("login_form").submit()
-        time.sleep(5)
-        self.assertEqual(self.selenium.title, "SongScaffolder")
