@@ -141,30 +141,32 @@ class SeleniumTestsFirefox(BaseTestClass, StaticLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.selenium = WebDriverFirefox()
-        cls.selenium.implicitly_wait(10)
-        cls.actionchains = ActionChains(cls.selenium)
 
     @classmethod
     def tearDownClass(cls):
-        cls.selenium.quit()
         super().tearDownClass()
 
     def setUp(self):
         super().setUp()
+        self.driver = WebDriverFirefox()
+        self.driver.implicitly_wait(10)
+        self.actionchains = ActionChains(self.driver)
+
 
     def tearDown(self):
         super().tearDown()
+        self.driver.quit()
         self.clear_test_user_data()
 
     def login(self):
-        self.selenium.get('%s%s' % (self.live_server_url, '/login/'))
-        username_input = self.selenium.find_element_by_id("id_username")
+        driver = self.driver
+        driver.get('%s%s' % (self.live_server_url, '/login/'))
+        username_input = driver.find_element_by_id("id_username")
         username_input.send_keys(self.username)
-        password_input = self.selenium.find_element_by_id("id_password")
+        password_input = driver.find_element_by_id("id_password")
         password_input.send_keys(ss_test_user_pass)
-        self.selenium.find_element_by_id("login_form").submit()
-        WebDriverWait(self.selenium, 5).until(
+        driver.find_element_by_id("login_form").submit()
+        WebDriverWait(driver, 5).until(
             EC.title_is("SongScaffolder")
         )
 
@@ -173,37 +175,47 @@ class SeleniumTestsFirefox(BaseTestClass, StaticLiveServerTestCase):
         db["user_data"].delete_many({"username": {"$regex": "^SongScaffolderTestUser"}})
 
     def scroll_to(self, element):
-        self.selenium.execute_script("arguments[0].scrollIntoView();", element)
+        self.driver.execute_script("arguments[0].scrollIntoView();", element)
 
     def test_make_scaffold_no_data(self):
+        driver = self.driver
         self.login()
-        scaffold_button = self.selenium.find_element_by_id("btn-make-scaffold")
+        scaffold_button = driver.find_element_by_id("btn-make-scaffold")
         self.scroll_to(scaffold_button)
         self.actionchains.move_to_element(scaffold_button).click().perform()
         self.assertTrue(
-            WebDriverWait(self.selenium, 5).until(
-                EC.presence_of_element_located((By.CLASS_NAME, "modal-backdrop"))
+            WebDriverWait(driver, 5).until(
+                EC.presence_of_element_located((By.XPATH, "//td[text()='You selected nothing!']"))
             )
         )
         self.assertTrue(
-            WebDriverWait(self.selenium, 5).until(
-                EC.text_to_be_present_in_element((By.TAG_NAME, "tr"), "You selected nothing! Please select a field to include.")
+            WebDriverWait(driver, 5).until(
+                EC.presence_of_element_located((By.XPATH, "//td[text()='Please select a field to include.']"))
             )
         )
 
     def test_make_scaffold(self):
+        driver = self.driver
         self.login()
+        driver.switch_to_window(driver.window_handles[0])
         # CHORDS
-        chord_specs = self.selenium.find_element_by_id("define-specs-for_chords").click()
-        btn_add_rows = WebDriverWait(self.selenium, 10).until(
+        chord_specs = driver.find_element_by_id("define-specs-for_chords")
+        self.scroll_to(chord_specs)
+        self.actionchains.move_to_element(chord_specs).click().perform()
+        btn_add_rows = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.ID, "button-add-rows"))
         )
-        for i in range(5):
-            btn_add_rows.click()
-        self.selenium.implicitly_wait(2)
-        new_rows = self.selenium.find_elements_by_class_name("item-input.no-border")
-        frequencies = self.selenium.find_elements_by_class_name("pagination")
+        input_how_many = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, "how-many-to-add"))
+        )
+        driver.switch_to_window(driver.window_handles[0])
+        self.scroll_to(input_how_many)
+        input_how_many.click()
+        input_how_many.send_keys("5")
+        btn_add_rows.click()
 
+        new_rows = driver.find_elements_by_class_name("item-input.no-border")
+        frequencies = driver.find_elements_by_class_name("pagination")
         keys_values = [
             ("5",  2),
             ("Maj7", 5),
@@ -212,6 +224,7 @@ class SeleniumTestsFirefox(BaseTestClass, StaticLiveServerTestCase):
             ("Elektra", 4)
         ]
         for i, k_v in enumerate(keys_values):
+            driver.implicitly_wait(1)
             key, value = k_v
             row = new_rows[i]
             row.send_keys(key)
@@ -220,13 +233,12 @@ class SeleniumTestsFirefox(BaseTestClass, StaticLiveServerTestCase):
             frequency_tab.click()
             self.assertEqual(frequency_tab.text, str(value))
 
-        self.selenium.find_element_by_id("button-save").click()
-        time.sleep(2)
-        self.selenium.find_element_by_class_name("display-4.logo").click()
-        self.selenium.find_element_by_id("define-specs-for_chords").click()
+        driver.find_element_by_id("button-save").click()
+        driver.find_element_by_class_name("display-4.logo").click()
+        driver.find_element_by_id("define-specs-for_chords").click()
 
-        new_rows = self.selenium.find_elements_by_class_name("item-input.no-border")
-        frequencies = self.selenium.find_elements_by_class_name("pagination")
+        new_rows = driver.find_elements_by_class_name("item-input.no-border")
+        frequencies = driver.find_elements_by_class_name("pagination")
         self.assertEqual(len(new_rows), 5)
         self.assertEqual(len(frequencies), 5)
         for i, k_v in enumerate(keys_values):
@@ -236,18 +248,19 @@ class SeleniumTestsFirefox(BaseTestClass, StaticLiveServerTestCase):
 
 
     def test_cosmetic_things(self):
+        driver = self.driver
         self.login()
-
         # Test hovering over help buttons
         for element_id, expected_text in [
             ("get-help-for-fields", "Checking these will include random selections of the corresponding field into the scaffold. These selections can be specified by clicking the appropriate button."),
             ("get-help-for-quantities", "These determine how many items from the corresponding field you want to include."),
             ("get-help-for-specifications", "Clicking these will allow you to specify the selections for the corresponding field.")
         ]:
-            help_bubble = self.selenium.find_element_by_id(element_id)
-            self.actionchains.move_to_element(help_bubble).perform()
+
+            driver.switch_to_window(driver.window_handles[0])
+            self.actionchains.move_to_element(driver.find_element_by_id(element_id)).perform()
             self.assertTrue(
-            WebDriverWait(self.selenium, 5).until(
+                WebDriverWait(self.driver, 5).until(
                     EC.text_to_be_present_in_element((By.CLASS_NAME, "tooltip"), expected_text)
                 )
             )
