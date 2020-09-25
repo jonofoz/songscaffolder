@@ -168,10 +168,6 @@ class SeleniumTestsFirefox(BaseTestClass, StaticLiveServerTestCase):
             EC.title_is("SongScaffolder")
         )
 
-    def update_test_user_data(self):
-        db = connect_to_database(use_test_db=True)
-        db["user_data"].update_one({"username": self.username}, {"$set": {f'user_data.scaffold_config': example_scaffold_config}})
-
     def clear_test_user_data(self):
         db = connect_to_database(use_test_db=True)
         db["user_data"].delete_many({"username": {"$regex": "^SongScaffolderTestUser"}})
@@ -179,13 +175,64 @@ class SeleniumTestsFirefox(BaseTestClass, StaticLiveServerTestCase):
     def scroll_to(self, element):
         self.selenium.execute_script("arguments[0].scrollIntoView();", element)
 
-    def test_login(self):
+    def test_make_scaffold_no_data(self):
         self.login()
+        scaffold_button = self.selenium.find_element_by_id("btn-make-scaffold")
+        self.scroll_to(scaffold_button)
+        self.actionchains.move_to_element(scaffold_button).click().perform()
         self.assertTrue(
             WebDriverWait(self.selenium, 5).until(
-                EC.title_is("SongScaffolder")
+                EC.presence_of_element_located((By.CLASS_NAME, "modal-backdrop"))
             )
         )
+        self.assertTrue(
+            WebDriverWait(self.selenium, 5).until(
+                EC.text_to_be_present_in_element((By.TAG_NAME, "tr"), "You selected nothing! Please select a field to include.")
+            )
+        )
+
+    def test_make_scaffold(self):
+        self.login()
+        # CHORDS
+        chord_specs = self.selenium.find_element_by_id("define-specs-for_chords").click()
+        btn_add_rows = WebDriverWait(self.selenium, 10).until(
+            EC.presence_of_element_located((By.ID, "button-add-rows"))
+        )
+        for i in range(5):
+            btn_add_rows.click()
+        self.selenium.implicitly_wait(2)
+        new_rows = self.selenium.find_elements_by_class_name("item-input.no-border")
+        frequencies = self.selenium.find_elements_by_class_name("pagination")
+
+        keys_values = [
+            ("5",  2),
+            ("Maj7", 5),
+            ("m9", 1),
+            ("aug7", 3),
+            ("Elektra", 4)
+        ]
+        for i, k_v in enumerate(keys_values):
+            key, value = k_v
+            row = new_rows[i]
+            row.send_keys(key)
+            self.assertEqual(row.get_attribute("value"), key)
+            frequency_tab = frequencies[i].find_elements_by_tag_name("li")[value - 1]
+            frequency_tab.click()
+            self.assertEqual(frequency_tab.text, str(value))
+
+        self.selenium.find_element_by_id("button-save").click()
+        time.sleep(2)
+        self.selenium.find_element_by_class_name("display-4.logo").click()
+        self.selenium.find_element_by_id("define-specs-for_chords").click()
+
+        new_rows = self.selenium.find_elements_by_class_name("item-input.no-border")
+        frequencies = self.selenium.find_elements_by_class_name("pagination")
+        self.assertEqual(len(new_rows), 5)
+        self.assertEqual(len(frequencies), 5)
+        for i, k_v in enumerate(keys_values):
+            key, value = k_v
+            self.assertEqual(new_rows[i].get_attribute("value"), key)
+            self.assertEqual(frequencies[i].find_elements_by_tag_name("li")[value - 1].text, str(value))
 
 
     def test_cosmetic_things(self):

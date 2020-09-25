@@ -53,11 +53,9 @@ def user_login(request):
             password = form.cleaned_data["password"]
             db = connect_to_database(use_test_db=True if username.startswith(ss_test_user_name) else False)
             user = db["auth_user"].find({"username": username})
-            # if user.count() > 0:
             user = user[0]
-            user_data_cursor = db["user_data"].find({"id": user["id"]})
+            user_data_cursor = db["user_data"].find({"username": user["username"]})
 
-            import pdb;pdb.set_trace()
             def remove_mongodb_id(d):
                 return {k: v for k, v in d.items() if k != "_id"}
             if user_data_cursor.count() > 0:

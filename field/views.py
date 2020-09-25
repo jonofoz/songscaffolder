@@ -8,6 +8,7 @@ from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from . import models
+from pages.tests import ss_test_user_name
 
 chords = "chords"
 feels = "feels"
@@ -21,6 +22,7 @@ time_signatures = "time-signatures"
 
 # Create your views here.
 @login_required
+@csrf_exempt
 def config(request, field_name):
 
     accepted_keys = [chords, feels, genres, influences, instruments, key_signatures, moods, themes, time_signatures]
@@ -34,29 +36,14 @@ def config(request, field_name):
             "field_name": field_name,
             "field_data": field_data
         }
-        return render(request, "pages/config.html", context=context)
     else:
-        db = connect_to_database()
-        user_id = request.session["metadata"]["id"]
-        if db["user_data"].find({"id": user_id}).count() == 0:
-            raise Exception(f"An unexpected error occurred: the user_data dict for user id {user_id} not found in database!")
-        if field_name not in request.session["metadata"]["user_data"]["scaffold_config"]:
-            request.session["metadata"]["user_data"]["scaffold_config"][field_name] = {}
-        db["user_data"].update_one({"id": user_id}, {"$set": {f'user_data.scaffold_config.{field_name}': request.session["metadata"]["user_data"]["scaffold_config"][field_name]}})
-        print("Changes saved")
-        return redirect('pages:index')
-    return redirect('pages:index')
-
-@login_required
-@csrf_exempt
-def save_changes(request, field_name):
-    new_field_data = json.loads(request.POST["field_data"])
-    db = connect_to_database()
-    user_id = request.session["metadata"]["id"]
-    db["user_data"].update_one({"id": user_id}, {"$set": {f'user_data.scaffold_config.{field_name}': new_field_data}})
-    request.session["metadata"]["user_data"]["scaffold_config"][field_name] = new_field_data
-    request.session.save()
-    return redirect('pages:index')
+        new_field_data = json.loads(request.POST["field_data"])
+        db = connect_to_database(use_test_db=True if request.session["metadata"]["username"].startswith(ss_test_user_name) else False)
+        username = request.session["metadata"]["username"]
+        db["user_data"].update_one({"username": username}, {"$set": {f'user_data.scaffold_config.{field_name}': new_field_data}})
+        request.session["metadata"]["user_data"]["scaffold_config"][field_name] = new_field_data
+        request.session.save()
+    return render(request, "pages/config.html", context=context)
 
 
 @login_required

@@ -90,10 +90,19 @@
         jsonString = JSON.stringify(newConfigData)
         $.ajax({
             type: "POST",
-            url: "{% url 'field:save-changes' field_name %}",
+            url: "{% url 'field:config' field_name %}",
             data: {
                 "field_data": jsonString,
-            }
+            },
+            success: function(){
+                top.location.href = "{% url 'pages:login' %}"
+            },
+            failure: function(){
+                top.location.href = "{% url 'pages:login' %}"
+            },
+            error: function(){
+                top.location.href = "{% url 'pages:login' %}"
+            },
         })
     })
 
