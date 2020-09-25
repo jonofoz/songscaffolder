@@ -163,6 +163,11 @@ input:checked + .slider:before {
   font-size: 24px;
 }
 
+#btn-make-scaffold {
+  font-family: 'Shrikhand', cursive;
+  font-size: 36px;
+}
+
 .btn-green:hover{
   color: var(--white);
   background-color: var(--dark-green);
@@ -186,7 +191,6 @@ input:checked + .slider:before {
 .btn-delete{
   background-color: var(--primary-grey) !important;
   border-color: var(--primary-grey) !important;
-  font-family: 'Montserrat', sans-serif;
   font-size: 16px;
 }
 
