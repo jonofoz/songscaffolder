@@ -26,7 +26,7 @@ SongScaffolder
         </div>
         <div class="col-4 second-col d-flex justify-content-center">
             <p class="get-help h3 text-center" id="get-help-for-quantities">
-                <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" title="These determine how many items from the corresponding field you want to include."></i>
+                <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" title="These determine how many items from the corresponding field should be included in the scaffold."></i>
             </p>
         </div>
         <div class="col-4 third-col d-flex justify-content-center">
@@ -48,7 +48,7 @@ SongScaffolder
                         </div>
                         <div class="col-5">
                             <label class="switch">
-                                <input type="checkbox" id="switch-include_{{ field.id }}">
+                                <input class="field-switch" type="checkbox" id="switch-include_{{ field.id }}" tabindex=0>
                                 <span class="slider round"></span>
                             </label>
                         </div>
@@ -85,7 +85,7 @@ SongScaffolder
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="jumbotron">
-                    <h4 class="display-4 text-center">Take It and Run, M8y</h4>
+                    <h4 id="scaffold-quote" class="display-4 text-center"></h4>
                     <table class="table table-striped">
                         <tbody>
 
@@ -102,8 +102,24 @@ SongScaffolder
 
     <script>
         $("#btn-make-scaffold").on("click", function() {
+            // For fun, we have nice quotes. :)
+            scaffoldQuotes = [
+                "Take it and run!",
+                "You <em>can</em> make the thing!",
+                "Make it tasty!",
+                "Don't forget the sauce!",
+                "Make your heroes proud!",
+                "You were born for this!",
+                "Never stop not stopping!",
+                "We have liftoff!",
+                "And GO!",
+                "3,2,1, L E T ' S 🎷 J A M",
+                "Carry that weight!",
+            ];
             // First, we'll clear any old scaffold results.
             tbody = $("tbody")
+            scaffoldQuote = $("#scaffold-quote")
+            scaffoldQuote.html("")
             tbody.children().remove()
             sectionWTH = $("#what-the-heck-section")
             sectionWTH.children().remove()
@@ -145,6 +161,7 @@ SongScaffolder
                         );
                     }
                     if (Object.entries(data)[0][0] != "You selected nothing!") {
+                        scaffoldQuote.html(scaffoldQuotes[Math.floor(Math.random() * scaffoldQuotes.length)])
                         $("#what-the-heck-section").append(`
                         <br>
                         <div class="row">
@@ -158,8 +175,12 @@ SongScaffolder
                         </div>
                         `)
                     }
+                    else {
+                        scaffoldQuote.html("Whoops")
+                    }
                 },
                 failure: function(data){
+                    scaffoldQuote.html("Hmm...")
                     tbody.append(
                             `
                                 <tr>
@@ -170,6 +191,7 @@ SongScaffolder
                     )
                 },
                 error: function(xhr, status, error){
+                    scaffoldQuote.html("🤯")
                     var errorMessage = xhr.status + ': ' + xhr.statusText
                     tbody.append(
                             `
