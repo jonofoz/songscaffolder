@@ -21,7 +21,7 @@
                     <td class="text-center d-flex justify-content-center">
                         <ul class="pagination">
                             {% for i in "12345"|make_list %}
-                                <li class="page-item {% if i == ''|addstr:v  %} active {% endif %}"><p class="page-link" href="#">{{ i }}</p></li>
+                                <li class="page-item{% if i == ''|addstr:v  %} active {% endif %}"><p class="page-link" href="#">{{ i }}</p></li>
                             {% endfor %}
                         </ul>
                     </td>
@@ -84,12 +84,12 @@
             }
             newConfigData[key] = value
         }
-        jsonString = JSON.stringify(newConfigData)
         $.ajax({
             type: "POST",
             url: "{% url 'field:config' field_name %}",
+            dataType: "json",
             data: {
-                "field_data": jsonString,
+                "field_data": JSON.stringify(newConfigData),
             },
             success: function(){
                 top.location.href = "{% url 'pages:login' %}"
@@ -114,7 +114,7 @@
                     <td class="text-center d-flex justify-content-center">
                         <ul class="pagination">
                             {% for i in "12345"|make_list %}
-                                <li class="page-item {% if i == '3'  %} active {% endif %}"><p class="page-link" href="#">{{ i }}</p></li>
+                                <li class="page-item{% if i == '3'  %} active {% endif %}"><p class="page-link" href="#">{{ i }}</p></li>
                             {% endfor %}
                         </ul>
                     </td>
@@ -131,7 +131,7 @@
                 <td class="text-center d-flex justify-content-center">
                     <ul class="pagination">
                         {% for i in "12345"|make_list %}
-                            <li class="page-item {% if i == '3'  %} active {% endif %}"><p class="page-link" href="#">{{ i }}</p></li>
+                            <li class="page-item{% if i == '3'  %} active {% endif %}"><p class="page-link" href="#">{{ i }}</p></li>
                         {% endfor %}
                     </ul>
                 </td>

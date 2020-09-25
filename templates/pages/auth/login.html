@@ -9,12 +9,12 @@ Login
 
 {% block content %}
 <h1 class="display-3">Log In</h1>
-<form action="{% url 'pages:login' %}" method="post" id="login_form">
+<form action="{% url 'pages:login' %}" method="post" id="login-form">
     <div class="form-group">
         {% csrf_token %}
         {{ form|crispy }}
-        <button type="submit" class="btn btn-primary btn-green btn-block" id="login_button">Login</button>
-        <p>Don't have an account? <a href="{% url 'pages:signup' %}" id="signup_redirect_link">Sign Up</a></p>
+        <button type="submit" class="btn btn-primary btn-green btn-block" id="login-button">Login</button>
+        <p>Don't have an account? <a href="{% url 'pages:signup' %}" id="signup-redirect-link">Sign Up</a></p>
         <br>
     </div>
   </form>

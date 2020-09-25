@@ -6,6 +6,7 @@ import json
 import requests
 from random import randint
 from datetime import datetime
+from lxml import html
 
 sys.path.append("..")
 from common.utils import connect_to_database
@@ -123,8 +124,33 @@ class UserTestCase(BaseTestClass):
         self.assertEqual(user_cursor.count(), 1)
         self.assertEqual(user_cursor[0]["user_data"], {'saved_scaffolds': [], 'scaffold_config': {}})
 
+
     def test_make_scaffold(self):
-        # logged_in = self.client.login(username=self.username, password=ss_test_user_pass)
-        # logged_in = self.client.force_login()
-        # response = client.post("/make-scaffold/", {"metadata":}, content_type="application/json").json()
-        pass
+        response = self.client.post(reverse("pages:login"), {"username": self.username, "password": ss_test_user_pass}, follow=True)
+        # GET
+        response = self.client.get("/config/chords")
+        self.assertEqual(response.resolver_match.func.__name__, "config")
+        self.assertEqual(response.status_code, 200)
+        # POST
+        response = self.client.post("/config/chords", {"field_data": json.dumps(example_scaffold_config["chords"])}, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.redirect_chain, [('/', 302)])
+        content_decoded = response.content.decode("utf-8")
+        self.assertTrue("<title>\n        \nSongScaffolder\n\n    </title>" in content_decoded)
+        # GET (Checking if results were actually saved)
+        response = self.client.get("/config/chords")
+        tree = html.fromstring(response.content)
+        keys_values = [(k,v) for k,v in example_scaffold_config["chords"].items()]
+        keys = tree.xpath("//input[@placeholder='Edit Me!']")
+        values = tree.xpath("//li[contains(@class, 'page-item') and contains(@class, 'active')]")
+        self.assertEqual(len(keys), 5)
+        self.assertEqual(len(values), 5)
+        for i, k_v in enumerate(keys_values):
+            k, v = k_v
+            self.assertEqual(keys[i].value, k)
+            self.assertEqual(int(values[i].text_content()), v)
+        # TEST DB
+        db = connect_to_database(use_test_db=True)
+        user_cursor = db["user_data"].find({"username": self.username})
+        self.assertEqual(user_cursor.count(), 1)
+        self.assertEqual(user_cursor[0]["user_data"], {'saved_scaffolds': [], 'scaffold_config': {'chords': {'5': 3, 'Maj7': 5, 'm9': 4, 'aug7': 3, 'Elektra': 5}}})
