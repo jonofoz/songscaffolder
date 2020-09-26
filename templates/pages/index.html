@@ -5,66 +5,88 @@ SongScaffolder
 {% endblock %}
 
 {% block content %}
+
     <div class="row">
         <div class="col-4 header-col">
-            <div class="p-2 lead text-center">Use + Randomize These!</div>
+            <!-- <div class="p-2 text-center"><em>Fields.</em></div> -->
+            <div class="p-2 lead text-center d-flex" id="header-for-fields" >Use + Randomize These!</div>
         </div>
         <div class="col-4 header-col">
-            <div class="p-2 lead text-center">I Want This Many.</div>
+            <!-- <div class="p-2 text-center"><em>Quantities.</em></div> -->
+            <div class="p-2 lead text-center d-flex" id="header-for-quantities" >I Want This Many.</div>
         </div>
         <div class="col-4 header-col">
-            <div class="p-2 lead text-center">I Define Them Here.</div>
+            <!-- <div class="p-2 text-center"><em>Specs.</em></div> -->
+            <div class="p-2 lead text-center d-flex" id="header-for-specifications" >I Define Them Here.</div>
         </div>
     </div>
     <hr>
-
-    <div class="row zero-row">
-        <div class="col-4 first-col d-flex justify-content-center">
-            <p class="get-help h3 text-center" id="get-help-for-fields">
-                <i class="fa fa-question-circle" class="get-help h3 text-center" data-toggle="tooltip" data-placement="right" data-html="true" title="Checking these will include random selections of the corresponding field into the scaffold. These selections can be specified by clicking the appropriate <a class='fa fa-list fa-list-tooltip'></a> button." id="get-help-with-randomizing_{{ field.id }}"></i>
-            </p>
+    <section>
+        <div class="row zero-row">
+            <div class="col-md-4 col-6 first-col">
+                <p class="get-help h3 text-center" id="get-help-for-fields">
+                    <i class="fa fa-question-circle" class="get-help h3 text-center" data-toggle="tooltip" data-placement="right" data-html="true" title="Checking these will include random selections of the corresponding field into the scaffold. These selections can be specified by clicking the appropriate <a class='fa fa-list fa-list-tooltip'></a> button." id="get-help-with-randomizing_{{ field.id }}"></i>
+                </p>
+            </div>
+            <div class="col-md-4 col-3 second-col">
+                <p class="get-help h3 text-center" id="get-help-for-quantities">
+                    <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" title="These determine how many items from the corresponding field should be included in the scaffold."></i>
+                </p>
+            </div>
+            <div class="col-md-4 col-3 third-col">
+                <p class="get-help h3 text-center" id="get-help-for-specifications">
+                    <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" title="Clicking these will allow you to specify the selections for the corresponding field."></i>
+                </p>
+            </div>
         </div>
-        <div class="col-4 second-col d-flex justify-content-center">
-            <p class="get-help h3 text-center" id="get-help-for-quantities">
-                <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" title="These determine how many items from the corresponding field should be included in the scaffold."></i>
-            </p>
-        </div>
-        <div class="col-4 third-col d-flex justify-content-center">
-            <p class="get-help h3 text-center" id="get-help-for-specifications">
-                <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" title="Clicking these will allow you to specify the selections for the corresponding field."></i>
-            </p>
-        </div>
-    </div>
+    </section>
 
     {% if fields %}
         {% for field in fields %}
-            <!-- One whole row -->
-            <div class="row first-row">
+
+            <!-- Medium+ displays -->
+            <div class="row first-row d-none d-md-flex">
                 <!-- 1: The field name, the switch for it, and an info bubble -->
-                <div class="col-4 first-col">
+                <div class="col-sm-6 col-md-4 first-col">
                     <div class="row">
-                        <div class="col-7 text-right">
-                            <p class="center">{{ field.title }}</p>
+                        <div class="col-7 text-center">
+                            <p>{{ field.title }}</p>
                         </div>
                         <div class="col-5">
                             <label class="switch">
-                                <input class="field-switch" type="checkbox" id="switch-include_{{ field.id }}" tabindex=0>
+                                <input type="checkbox" class="field-switch" id="switch-include_{{ field.id }}" tabindex=0>
                                 <span class="slider round"></span>
                             </label>
                         </div>
                     </div>
                 </div>
                 <!-- 2: The quantity form for the field -->
-                <div class="col-4 second-col d-flex justify-content-center" >
+                <div class="col-sm-2 col-md-4 second-col d-flex justify-content-center" >
                     <form>
                         <input type="text" class="no-border border-bottom text-center field-form" id="quantity-for_{{ field.id }}" placeholder=1><br><br>
                     </form>
                 </div>
                 <!-- 3: The specs and an info bubble for what they do -->
-                <div class="col-4 third-col d-flex justify-content-center">
-                    <div class="row">
-                        <div class="col-2"><a class="fa fa-list" id="define-specs-for_{{ field.id }}" href="{% url 'field:config' field.id %}"></a></div>
-                    </div>
+                <div class="col-sm-4 col-md-4 third-col d-flex justify-content-center">
+                    <div><a class="fa fa-list" id="define-specs-for_{{ field.id }}" href="{% url 'field:config' field.id %}"></a></div>
+                </div>
+            </div>
+
+            <!-- Small- displays -->
+            <div class="row first-row d-flex d-md-none">
+                <!-- 1: The field name, the switch for it, and an info bubble -->
+                <div class="col-6 first-col">
+                    <input type="button" class="btn btn-green btn-block btn-off" id="button-include_{{ field.id }}" value="{{ field.title }}" tabindex=0>
+                </div>
+                <!-- 2: The quantity form for the field -->
+                <div class="col-3 second-col" >
+                    <form>
+                        <input type="text" class="no-border border-bottom text-center field-form" id="quantity-for_{{ field.id }}" placeholder=1><br><br>
+                    </form>
+                </div>
+                <!-- 3: The specs and an info bubble for what they do -->
+                <div class="col-3 third-col">
+                    <div class="col-2"><a class="fa fa-list" id="define-specs-for_{{ field.id }}" href="{% url 'field:config' field.id %}"></a></div>
                 </div>
             </div>
         {% endfor %}
@@ -74,7 +96,7 @@ SongScaffolder
         <div class="col-2">
         </div>
         <div class="col-8">
-            <button class="btn btn-lg btn-block btn-green" id="btn-make-scaffold" data-toggle="modal" data-target=".bd-example-modal-lg">SCAFFOLD THAT SONG</button>
+            <button class="btn btn-lg btn-block btn-confirm" id="btn-make-scaffold" data-toggle="modal" data-target=".bd-example-modal-lg">SCAFFOLD THAT SONG</button>
         </div>
         <div class="col-2">
         </div>
@@ -101,6 +123,10 @@ SongScaffolder
     <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
 
     <script>
+        $("input[id^='button-include_']").on("click", function() {
+            $(this).toggleClass("btn-off");
+        });
+
         $("#btn-make-scaffold").on("click", function() {
             // For fun, we have nice quotes. :)
             scaffoldQuotes = [
@@ -108,7 +134,7 @@ SongScaffolder
                 "You <em>can</em> make the thing!",
                 "Make it tasty!",
                 "Don't forget the sauce!",
-                "Make your heroes proud!",
+                "Make parental figures proud!",
                 "You were born for this!",
                 "Never stop not stopping!",
                 "We have liftoff!",
@@ -118,27 +144,46 @@ SongScaffolder
             ];
             // First, we'll clear any old scaffold results.
             tbody = $("tbody")
-            scaffoldQuote = $("#scaffold-quote")
-            scaffoldQuote.html("")
-            tbody.children().remove()
             sectionWTH = $("#what-the-heck-section")
+            scaffoldQuote = $("#scaffold-quote")
+            tbody.children().remove()
             sectionWTH.children().remove()
+            scaffoldQuote.html("")
 
             metadata = {}
-            fieldsToInclude = $('input[type="checkbox"]')
-            for (i=0 ; i < fieldsToInclude.length; i++){
-                fieldName = fieldsToInclude[i].id.split("_")[1]
+            switches = $("input[id^='switch-include_']").filter(":visible")
+            buttons  = $("input[id^='button-include_']").filter(":visible")
+            onMediumScreen = true ? buttons.length > 0 : false
+            console.log(switches.length)
+            quantities = $(`input[id^="quantity-for_"]`).filter(":visible")
+            for (i = 0; i < quantities.length; i++){
+                fieldName = quantities[i].id.split("_")[1]
                 quantityForm = $(`input[id^="quantity-for_${fieldName}"]`)
                 fieldValue = quantityForm.val() != "" ? parseInt(quantityForm.val()) : 1
-                if (fieldsToInclude[i].checked == true) {
-                    metadata[fieldName] = {
-                        "include": true,
-                        "quantity": fieldValue
+                if (onMediumScreen) {
+                    if (!(buttons[i].getAttribute("class").includes("btn-off"))){
+                        metadata[fieldName] = {
+                            "include": true,
+                            "quantity": fieldValue
+                        }
+                    }
+                    else {
+                        metadata[fieldName] = {
+                            "include": false
+                        }
                     }
                 }
                 else {
-                    metadata[fieldName] = {
-                        "include": false
+                    if (switches[i].checked == true){
+                        metadata[fieldName] = {
+                            "include": true,
+                            "quantity": fieldValue
+                        }
+                    }
+                    else {
+                        metadata[fieldName] = {
+                            "include": false
+                        }
                     }
                 }
             }
@@ -165,18 +210,17 @@ SongScaffolder
                         $("#what-the-heck-section").append(`
                         <br>
                         <div class="row">
-                            <div class="col-3">
-                            </div>
                             <div class="col-6 d-flex justify-content-center">
                                 <a type="button" id="btn-what-the-heck" class="btn btn-grey btn-block btn-small" href="{% url 'pages:what-the-heck' %}">What the heck?</a>
                             </div>
-                            <div class="col-3">
+                            <div class="col-6 d-flex justify-content-center">
+                                <a type="button" class="btn btn-green btn-block btn-small" data-dismiss="modal">OK</button></a>
                             </div>
                         </div>
                         `)
                     }
                     else {
-                        scaffoldQuote.html("Whoops")
+                        scaffoldQuote.html("Whoops 🔌")
                     }
                 },
                 failure: function(data){

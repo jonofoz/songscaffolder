@@ -13,7 +13,7 @@ Sign Up
     <form action="{% url 'pages:signup' %}" class="form-group" method="post">
         {% csrf_token %}
         {{ form|crispy }}
-        <input type="submit" class="btn btn-primary btn-green btn-block" value="Sign Up">
+        <input type="submit" class="btn btn-primary btn-confirm btn-block" value="Sign Up">
     </form>
 </div>
 {% endblock %}

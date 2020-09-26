@@ -10,14 +10,21 @@
 
 <h1 class="text-center config-header">{{ ""|replace_dashes:field_name|title }}</h1>
 <hr>
-<!-- Basic -->
+
 <table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+          <th class="text-center" scope="col"><p>(What to include)</p></th>
+          <th class="text-center" scope="col"><p>(Its chance of inclusion)</p></th>
+          <th class="text-center" scope="col"><p>(delet this)</p></th>
+        </tr>
+      </thead>
     <tbody>
         {% for k, v in field_data.items %}
         <!-- Replace with slugify I believe -->
             {% with "tr-"|addstr:k as dynamic_id %}
                 <tr class="config-row">
-                    <td style="width: 70%" ><input type="text" class="item-input no-border border-bottom field-form inherit-bg-color" placeholder="Edit Me!" value="{{ k }}"></input></td>
+                    <td style="width: 70%"><input type="text" class="item-input no-border border-bottom field-form inherit-bg-color" placeholder="Edit Me!" value="{{ k }}"></input></td>
                     <td class="text-center d-flex justify-content-center">
                         <ul class="pagination">
                             {% for i in "12345"|make_list %}
@@ -25,7 +32,7 @@
                             {% endfor %}
                         </ul>
                     </td>
-                    <td style="width: 10%"><a href="#" class="btn btn-secondary btn-delete active d-flex justify-content-center" role="button" aria-pressed="true">Delete</a></td>
+                    <td style="width: 10%"><a href="#" class="btn btn-secondary btn-grey btn-delete active d-flex justify-content-center" role="button" aria-pressed="true">Delete</a></td>
                 </tr>
             {% endwith %}
         {% endfor %}
@@ -33,7 +40,7 @@
 </table>
 <div class="row">
     <div class="col-10">
-        <button class="btn btn-primary btn-green btn-block" id="button-add-rows">+</button>
+        <button class="btn btn-primary btn-confirm btn-block" id="button-add-rows">+</button>
     </div>
     <div class="col-2">
         <label for="how-many-to-add">Add this many new rows.</label>
@@ -42,7 +49,7 @@
 </div>
 <div class="row last-row">
     <div class="col-6">
-        <button class="btn btn-lg btn-block btn-green" id="button-save" aria-pressed="true">Save Changes</a>
+        <button class="btn btn-lg btn-block btn-confirm" id="button-save" aria-pressed="true">Save Changes</a>
     </div>
     <div class="col-6">
         <button class="btn btn-lg btn-block btn-grey" id="button-delete-all" aria-pressed="true">Delete All</a>
