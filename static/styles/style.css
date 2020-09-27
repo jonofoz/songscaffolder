@@ -241,6 +241,12 @@ input:checked + .slider:before {
   }
 }
 
+@media screen and (max-width: 576px){
+  .logo {
+    font-size: 32px;
+  }
+}
+
 .modal-content {
   background-color: #E9ECEF;
   font-size: 1.3em;
@@ -409,5 +415,17 @@ textarea:hover{
 }
 
 input[id^='button-include_'] {
-  /* font-size: 3.5vw; */
+  font-size: 4.2vw;
+}
+
+@media screen and (min-width: 380px){
+  input[id^='button-include_'] {
+    font-size: 18px;
+  }
+}
+
+
+.btn-div{
+  padding-left: 0px;
+  padding-right: 0px;
 }
