@@ -66,9 +66,22 @@ hr {
   background-color: inherit !important;
 }
 
-.item-input {
+input[class^='config-input-']{
   width: 100% !important;
-  font-size: 1.5em !important;
+  font-size: 24px !important;
+}
+
+
+@media screen and (max-width: 768px){
+  .config-input {
+    font-size: 20px !important;
+  }
+}
+
+@media screen and (max-width: 576px){
+  .config-input {
+    font-size: 18px !important;
+  }
 }
 
 /* Switch styling */
@@ -204,10 +217,10 @@ input:checked + .slider:before {
   border-color: var(--dark-grey);
 }
 
-.btn-delete{
-  background-color: var(--primary-grey) !important;
-  border-color: var(--primary-grey) !important;
+button.row-deleter{
   font-size: 16px;
+  background-color: var(--primary-grey) !important;
+  border-color: var(---grey) !important;
 }
 
 .btn-small{
@@ -423,7 +436,6 @@ input[id^='button-include_'] {
     font-size: 18px;
   }
 }
-
 
 .btn-div{
   padding-left: 0px;
