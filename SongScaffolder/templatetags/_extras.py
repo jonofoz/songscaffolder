@@ -13,8 +13,3 @@ def addstr(arg1, arg2):
 def replace_dashes(arg1, arg2):
     """Returns a string with any dashes replaced by spaces."""
     return str(arg2).replace("-", " ")
-
-@register.filter(name="subtract_one")
-def subtract_one(arg1, arg2):
-    """Converts a string number into an int, subtracts one, then returns the result as a string."""
-    return str(arg1)+str(int(arg2)-1)
