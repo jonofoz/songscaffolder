@@ -75,7 +75,7 @@ class SongScaffolder(object):
         def _more_results_than_data(data, results_wanted):
             return True if results_wanted > _count_keys_in_dict(data) else False
 
-        source_data = self.data[full_title]
+        source_data = {k:v for k,v in self.data[full_title].items() if v != 0}
         results = []
 
         # For now, this only works on single-level JSON documents.

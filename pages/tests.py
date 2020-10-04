@@ -25,7 +25,7 @@ example_scaffold_config = {
         "5": 3,
         "Maj7": 5,
         "m9": 4,
-        "aug7": 3,
+        "aug7": 0,
         "Elektra": 5
     },
     "Genres": {
@@ -153,4 +153,4 @@ class UserTestCase(BaseTestClass):
         db = connect_to_database(use_test_db=True)
         user_cursor = db["user_data"].find({"username": self.username})
         self.assertEqual(user_cursor.count(), 1)
-        self.assertEqual(user_cursor[0]["user_data"], {'saved_scaffolds': [], 'scaffold_config': {'chords': {'5': 3, 'Maj7': 5, 'm9': 4, 'aug7': 3, 'Elektra': 5}}})
+        self.assertEqual(user_cursor[0]["user_data"], {'saved_scaffolds': [], 'scaffold_config': {'chords': {'5': 3, 'Maj7': 5, 'm9': 4, 'aug7': 0, 'Elektra': 5}}})
