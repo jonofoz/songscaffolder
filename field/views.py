@@ -1,7 +1,6 @@
 import json
 import sys, os
 sys.path.append(os.path.join("..", ".."))
-from common.utils import connect_to_database
 
 from django.http import HttpResponse
 from django.shortcuts import render, redirect

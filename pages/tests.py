@@ -8,14 +8,12 @@ from random import randint
 from datetime import datetime
 from lxml import html
 
-sys.path.append("..")
-from common.utils import connect_to_database
-
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.test.utils import tag
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from field.models import UserData
 
 ss_test_user_name = "SongScaffolderTestUser"
 ss_test_user_pass = "IsThi$Pa$$w0rdGoodEnough4Ye"
@@ -58,8 +56,6 @@ def clear_test_data():
         test_users.delete()
     except:
         pass
-    db = connect_to_database(use_test_db=True)
-    db["user_data"].delete_many({"username": {"$regex": "^SongScaffolderTestUser"}})
 
 class BaseTestClass(TestCase):
     def setUp(self):
@@ -75,6 +71,8 @@ class BaseTestClass(TestCase):
 
         self.user = User.objects.create_user(username=self.username, password=ss_test_user_pass)
         self.user.save()
+        self.user_data = UserData(user=self.user)
+        self.user_data.save()
 
     def tearDown(self):
         clear_test_data()
@@ -97,11 +95,10 @@ class UserTestCase(BaseTestClass):
         content_decoded = response.content.decode("utf-8")
         self.assertFalse(f"(Hi, {self.username}!)" in content_decoded)
         self.assertTrue("<title>\n        \nLogin\n\n    </title>" in content_decoded)
-        # TEST DB
-        db = connect_to_database(use_test_db=True)
-        user_cursor = db["user_data"].find({"username": self.username})
-        self.assertEqual(user_cursor.count(), 1)
-        self.assertEqual(user_cursor[0]["user_data"], {'saved_scaffolds': [], 'scaffold_config': {}})
+        # Test UserData
+        user_data = UserData.objects.get(user=User.objects.get(username=self.username))
+        self.assertEqual(user_data.saved_scaffolds, [])
+        self.assertEqual(user_data.scaffold_config, {})
 
 
     def test_login(self):
@@ -118,11 +115,10 @@ class UserTestCase(BaseTestClass):
         content_decoded = response.content.decode("utf-8")
         self.assertTrue("<title>\n        \nSongScaffolder\n\n    </title>" in content_decoded)
         self.assertTrue(f"(Hi, {self.username}!)" in content_decoded)
-        # TEST DB
-        db = connect_to_database(use_test_db=True)
-        user_cursor = db["user_data"].find({"username": self.username})
-        self.assertEqual(user_cursor.count(), 1)
-        self.assertEqual(user_cursor[0]["user_data"], {'saved_scaffolds': [], 'scaffold_config': {}})
+        # Test UserData
+        user_data = UserData.objects.get(user=User.objects.get(username=self.username))
+        self.assertEqual(user_data.saved_scaffolds, [])
+        self.assertEqual(user_data.scaffold_config, {})
 
 
     def test_make_scaffold(self):
@@ -136,6 +132,7 @@ class UserTestCase(BaseTestClass):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.redirect_chain, [('/', 302)])
         content_decoded = response.content.decode("utf-8")
+        # Here we make sure we go back to the homepage.
         self.assertTrue("<title>\n        \nSongScaffolder\n\n    </title>" in content_decoded)
         # GET (Checking if results were actually saved)
         response = self.client.get("/config/chords")
@@ -149,8 +146,7 @@ class UserTestCase(BaseTestClass):
             k, v = k_v
             self.assertEqual(keys[i].value, k)
             self.assertEqual(int(values[i].text_content()), v)
-        # TEST DB
-        db = connect_to_database(use_test_db=True)
-        user_cursor = db["user_data"].find({"username": self.username})
-        self.assertEqual(user_cursor.count(), 1)
-        self.assertEqual(user_cursor[0]["user_data"], {'saved_scaffolds': [], 'scaffold_config': {'chords': {'5': 3, 'Maj7': 5, 'm9': 4, 'aug7': 0, 'Elektra': 5}}})
+        # Test UserData
+        user_data = UserData.objects.get(user=User.objects.get(username=self.username))
+        self.assertEqual(user_data.saved_scaffolds, [])
+        self.assertEqual(user_data.scaffold_config, {'chords': {'5': 3, 'Maj7': 5, 'm9': 4, 'aug7': 0, 'Elektra': 5}})

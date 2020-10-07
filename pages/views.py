@@ -1,7 +1,6 @@
 import json
 import sys, os
 sys.path.append(os.path.join("..", ".."))
-from common.utils import connect_to_database
 from backend.scaffolder import SongScaffolder
 
 from django import forms
