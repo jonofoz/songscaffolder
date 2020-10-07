@@ -1,12 +1,20 @@
 from djongo import models
+from django.contrib.auth.models import User
+from django.contrib.postgres.fields import ArrayField, JSONField
 
 # Create your models here.
 
-class Field(models.Model):
+class UserData(models.Model):
 
-    field_name = models.CharField(max_length=25, unique=True)
-    field_quantity = models.PositiveIntegerField()
-    field_randomize = models.PositiveIntegerField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    saved_scaffolds = ArrayField(
+        JSONField(
+            models.CharField(max_length=10, blank=True)
+        ),
+        size=10,
+        default=list
+    )
+    scaffold_config = JSONField(default=dict)
 
     def __str__(self):
-        return str(self.field_name)
+        return f"UserData | {self.user.username}"

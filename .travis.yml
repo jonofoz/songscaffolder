@@ -3,6 +3,10 @@ env:
     - MOZ_HEADLESS=1
 addons:
   firefox: latest
+services:
+  - postgresql
+before_script:
+  - psql -c 'create database test_db;' -U postgres
 before_install:
   - wget https://github.com/mozilla/geckodriver/releases/download/v0.27.0/geckodriver-v0.27.0-linux64.tar.gz
   - mkdir geckodriver
