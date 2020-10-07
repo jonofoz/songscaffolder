@@ -1,7 +1,5 @@
 from django import forms
-from django.core import validators
 from django.contrib.auth import authenticate
-from django.contrib.auth.models import User
 from django.contrib.auth.forms import UsernameField
 from django.utils.translation import gettext, gettext_lazy as _
 

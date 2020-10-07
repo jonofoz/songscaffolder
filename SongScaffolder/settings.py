@@ -19,11 +19,6 @@ TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
 STATIC_DIR = os.path.join(BASE_DIR, "static")
 
 load_dotenv(dotenv_path=os.path.join(BASE_DIR, ".env"))
-try:
-    os.getenv("DB_USER")
-except KeyError:
-    # Handled by Travis for testing purposes.
-    raise
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
