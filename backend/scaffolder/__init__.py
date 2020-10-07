@@ -1,10 +1,5 @@
-import sys
 import os
-# import json
 from random import randint as r_int
-
-sys.path.append(os.path.join("..", ".."))
-from common import attributes_map
 
 def _get_subset(data):
     return [k for k,v in data.items() if v >= r_int(1,5)]
@@ -22,11 +17,10 @@ def _count_keys_in_dict(data):
     return total_keys
 
 class SongScaffolder(object):
-    def __init__(self, data={}, quantities={}, attributes={}, directives={}):
-        self.data = data
+    def __init__(self, metadata={}, quantities={}, attributes={}):
+        self.metadata = metadata
         self.attributes = attributes
         self.quantities = quantities
-        self.directives = directives
 
     def __enter__(self):
         self.generate()
@@ -39,29 +33,15 @@ class SongScaffolder(object):
         return self.song_data[attr]
 
     def generate(self):
-        self.song_data      = {}
-        self.printable_data = []
-        for full_title, truth_value in self.attributes.items():
-            if truth_value == True:
-                # directives_to_use = self.directives[full_title] if full_title in self.directives else {}
-                directives_to_use = {}
-                # TODO: Replace r_int with value specified by user.
-                # TODO: Remove directives to generalize data format.
-                self.song_data[full_title] = self._generate(full_title, int(self.quantities[full_title]), directives=directives_to_use)
-                # TODO: Remove printable_data.
-                # self.printable_data.append("{:16} {}".format(full_title.upper().replace("_", " "), self.song_data[attr]))
-
-    # TODO: Remove print_results.
-    def print_results(self):
-        print("\n------------ NEW SCAFFOLD ------------\n")
-        for line in self.printable_data:
-            print(line + "\n")
-        print("--------------------------------------\n")
+        self.song_data = {}
+        for attr_title, should_include in self.attributes.items():
+            if should_include == True:
+                self.song_data[attr_title] = self._generate_attr_results(attr_title, int(self.quantities[attr_title]))
 
     def get_json_results(self):
         return self.song_data
 
-    def _generate(self, full_title, results_left=1, **directives):
+    def _generate_attr_results(self, attr_title, results_left=1):
 
         def _try_append_result(result, results, results_left):
             if result not in results:
@@ -75,19 +55,18 @@ class SongScaffolder(object):
         def _more_results_than_data(data, results_wanted):
             return True if results_wanted > _count_keys_in_dict(data) else False
 
-        source_data = {k:v for k,v in self.data[full_title].items() if v != 0}
         results = []
+        source_metadata = {attr:freq for attr, freq in self.metadata[attr_title].items() if freq != 0}
 
-        # For now, this only works on single-level JSON documents.
-        if _more_results_than_data(source_data, results_left):
+        if _more_results_than_data(source_metadata, results_left):
+            all_results = [res for res in source_metadata.keys()]
             # TODO: Return as warning to user.
-            print("\nWARNING: The number of requested results ({}) for '{}' was greater than the" \
-                  "unique results available from the data. Returning all results.\n".format(results_left, full_title))
-            return [k for k in source_data.keys()]
+            print(f"\nWARNING: The number of requested results ({results_left}) for '{attr_title}' was greater than the " \
+                  f"number of unique results ({len(all_results)}) available from the data. Returning all results.\n")
+            return all_results
 
-        # TODO: Remove this check once data format is standardized.
         while results_left > 0:
-            result = _pick_random(_get_subset(source_data))
+            result = _pick_random(_get_subset(source_metadata))
             results_left = _try_append_result(result, results, results_left)
 
         return results

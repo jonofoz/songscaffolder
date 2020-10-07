@@ -1,18 +1,18 @@
 import json
 import sys, os
+
 sys.path.append(os.path.join("..", ".."))
 from backend.scaffolder import SongScaffolder
 
 from django import forms
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.forms import UserCreationForm
 from .forms import LoginForm
-from .tests import ss_test_user_name
 from field.models import UserData
 
 # Create your views here.
@@ -96,10 +96,9 @@ def make_scaffold(request):
     attributes = {k: v["include"] for k,v in json.loads(request.GET["metadata"]).items()}
     quantities = {k: v["quantity"] for k, v in json.loads(request.GET["metadata"]).items() if "quantity" in v}
     with SongScaffolder(
-        data=request.session["metadata"]["user_data"]["scaffold_config"],
+        metadata=request.session["metadata"]["user_data"]["scaffold_config"],
         attributes=attributes,
-        quantities=quantities,
-        directives={}) as scaffolder:
+        quantities=quantities) as scaffolder:
         results = scaffolder.get_json_results()
         if results == {}:
             results = {"You selected nothing!": ["Please select a field to include."]}

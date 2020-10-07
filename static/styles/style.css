@@ -17,37 +17,9 @@ p {
   font-size: 1.2em;
 }
 
-hr {
-    color: black;
-}
 
-.first-col, .second-col, .third-col{
-    padding-top: inherit;
-    padding-bottom: inherit;
-}
 
-@media screen and (min-width: 768px){
-  .first-col, .second-col{
-      border-right: 1px solid #4CD964;
-  }
-}
-
-.main-col {
-    /* border: 2px solid black; */
-}
-
-.container{
-    /* background-color: rgb(189, 203, 218); */
-}
-
-.zero-row{
-    padding-top: 12px;
-    height: 88px;
-}
-
-.first-row{
-    /* padding-top: 60px; */
-}
+/* || General styling */
 
 .lead {
     font-size: 30px;
@@ -55,32 +27,27 @@ hr {
 }
 
 .no-border {
-    border: 0px;
+    border: none;
 }
 
 .inherit-bg-color {
   background-color: inherit !important;
 }
 
+.get-help-row{
+  padding-top: 12px;
+  height: 88px;
+}
+
+/* || Input styling */
+
 input[class^='config-input-']{
   width: 100% !important;
-  font-size: 24px !important;
+  font-size: 24px;
 }
 
 
-@media screen and (max-width: 768px){
-  .config-input {
-    font-size: 20px !important;
-  }
-}
-
-@media screen and (max-width: 576px){
-  .config-input {
-    font-size: 18px !important;
-  }
-}
-
-/* Switch styling */
+/* || Switch styling */
 
 .switch {
     position: relative;
@@ -89,14 +56,12 @@ input[class^='config-input-']{
     height: 34px;
 }
 
-/* Hide default HTML checkbox */
 .switch input {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-/* The slider */
 .slider {
   position: absolute;
   cursor: pointer;
@@ -132,7 +97,6 @@ input:checked + .slider:before {
   filter: drop-shadow(2px 2px 2px #2a7423);
 }
 
-/* Rounded sliders */
 .slider.round {
   border-radius: 34px;
 }
@@ -142,6 +106,7 @@ input:checked + .slider:before {
   filter: drop-shadow(2px 2px 2px #818181);
 }
 
+/* || FontAwesome styling */
 .fa-list {
   color: var(--white);
   background-color: var(--primary-grey);
@@ -185,12 +150,6 @@ input:checked + .slider:before {
 #btn-make-scaffold {
   font-family: 'Shrikhand', cursive;
   font-size: 36px;
-}
-
-@media screen and (max-width: 768px){
-  #btn-make-scaffold {
-    font-size: 24px;
-  }
 }
 
 .btn-confirm:hover{
@@ -237,33 +196,6 @@ button.row-deleter{
 }
 
 
-@media screen and (max-width: 1200px){
-  .logo {
-    font-size: 50px;
-  }
-}
-@media screen and (max-width: 992px){
-  .logo {
-    font-size: 42px;
-  }
-}
-@media screen and (max-width: 768px){
-  .logo {
-    font-size: 36px;
-    -webkit-text-stroke: 2px var(--primary-green);
-    text-shadow:
-    -0px -0px 0 var(--primary-green),
-    0px -0px 0 var(--primary-green),
-    -0px 0px 0 var(--primary-green),
-    2px 2px 0 var(--primary-green);
-  }
-}
-
-@media screen and (max-width: 576px){
-  .logo {
-    font-size: 32px;
-  }
-}
 
 .modal-content {
   background-color: #E9ECEF;
@@ -398,6 +330,56 @@ textarea:hover{
 }
 
 
+.navbar {
+  background-color: var(--primary-green) !important;
+}
+
+.nav-link {
+  font-size: 20px;
+  font-weight: bolder !important;
+  color: var(--white) !important;
+}
+
+.btn-off {
+  background-color: var(--faded-green);
+  border-color: var(--faded-green);
+}
+
+input[id^='button-include_'] {
+  font-size: 4.2vw;
+}
+
+.btn-div{
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+
+/* || Media specific styling */
+
+@media screen and (min-width: 768px){
+  .first-col, .second-col{
+      border-right: 1px solid #4CD964;
+  }
+}
+
+@media screen and (max-width: 768px){
+  input[class^='config-input-'] {
+    font-size: 20px !important;
+  }
+}
+@media screen and (max-width: 576px){
+  input[class^='config-input-']{
+    font-size: 18px !important;
+  }
+}
+
+@media screen and (min-width: 380px){
+  input[id^='button-include_'] {
+    font-size: 18px;
+  }
+}
+
 @media only screen and (max-width: 992px) {
   div[id^='header-for-'] {
     font-size: 3.5vw;
@@ -420,32 +402,36 @@ textarea:hover{
   }
 }
 
-.navbar {
-  background-color: var(--primary-green) !important;
+@media screen and (max-width: 1200px){
+  .logo {
+    font-size: 50px;
+  }
 }
-
-.nav-link {
-  font-size: 20px;
-  font-weight: bolder !important;
-  color: var(--white) !important;
+@media screen and (max-width: 992px){
+  .logo {
+    font-size: 42px;
+  }
 }
-
-.btn-off {
-  background-color: var(--faded-green);
-  border-color: var(--faded-green);
-}
-
-input[id^='button-include_'] {
-  font-size: 4.2vw;
-}
-
-@media screen and (min-width: 380px){
-  input[id^='button-include_'] {
-    font-size: 18px;
+@media screen and (max-width: 768px){
+  .logo {
+    font-size: 36px;
+    -webkit-text-stroke: 2px var(--primary-green);
+    text-shadow:
+    -0px -0px 0 var(--primary-green),
+    0px -0px 0 var(--primary-green),
+    -0px 0px 0 var(--primary-green),
+    2px 2px 0 var(--primary-green);
   }
 }
 
-.btn-div{
-  padding-left: 0px;
-  padding-right: 0px;
+@media screen and (max-width: 576px){
+  .logo {
+    font-size: 32px;
+  }
+}
+
+@media screen and (max-width: 768px){
+  #btn-make-scaffold {
+    font-size: 24px;
+  }
 }

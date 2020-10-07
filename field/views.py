@@ -2,14 +2,11 @@ import json
 import sys, os
 sys.path.append(os.path.join("..", ".."))
 
-from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
-from . import models
 from field.models import UserData
 from django.contrib.auth.models import User
-from pages.tests import ss_test_user_name
 
 chords = "chords"
 feels = "feels"
