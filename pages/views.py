@@ -10,9 +10,11 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from .forms import LoginForm
 from .tests import ss_test_user_name
+from field.models import UserData
 
 # Create your views here.
 @login_required
@@ -51,25 +53,15 @@ def user_login(request):
             login(request, authorized_user)
             username = form.cleaned_data["username"]
             password = form.cleaned_data["password"]
-            db = connect_to_database(use_test_db=True if username.startswith(ss_test_user_name) else False)
-            user = db["auth_user"].find({"username": username})
-            user = user[0]
-            user_data_cursor = db["user_data"].find({"username": user["username"]})
-
-            def remove_mongodb_id(d):
-                return {k: v for k, v in d.items() if k != "_id"}
-            if user_data_cursor.count() > 0:
-                user_data = remove_mongodb_id(user_data_cursor[0])
-            else:
-                user_data = {
-                    "username": user["username"],
-                    "user_data": {
-                        "saved_scaffolds": [],
-                        "scaffold_config": {}
-                    }
+            user_data = UserData.objects.get(user=User.objects.get(username=username))
+            metadata = {
+                "username": user_data.user.username,
+                "user_data": {
+                    "saved_scaffolds": user_data.saved_scaffolds,
+                    "scaffold_config": user_data.scaffold_config
                 }
-                db["user_data"].insert_one(user_data)
-            request.session["metadata"] = remove_mongodb_id(user_data)
+            }
+            request.session["metadata"] = metadata
             request.session.save()
             return HttpResponseRedirect(reverse('pages:index'))
         else:
@@ -90,18 +82,12 @@ def user_signup(request):
         if form.is_valid():
             form.save(commit=True)
             username = form.cleaned_data["username"]
-            user_data = {
-                "username": username,
-                "user_data": {
-                    "saved_scaffolds": [],
-                    "scaffold_config": {}
-                }
-            }
-            db = connect_to_database(use_test_db=True if username.startswith(ss_test_user_name) else False)
-            db["user_data"].insert_one(user_data)
+            user = User.objects.get(username=username)
+            user_data = UserData(user=user, saved_scaffolds=[], scaffold_config={})
+            user_data.save()
             return redirect("pages:login")
         else:
-            raise forms.ValidationError("Form was invalid.")
+            raise forms.ValidationError(form.errors)
     else:
         form = UserCreationForm()
     return render(request, "pages/auth/signup.html", {"form": form})
