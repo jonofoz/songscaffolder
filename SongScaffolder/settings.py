@@ -102,15 +102,12 @@ WSGI_APPLICATION = 'SongScaffolder.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'djongo',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv("DB_NAME"),
-        'CLIENT': {
-            'host': f'mongodb+srv://{os.getenv("DB_USER")}:{os.getenv("DB_PASS")}@{os.getenv("DB_PATH")}?retryWrites=true&w=majority',
-            'port': 27017,
-            'username': os.getenv("DB_USER"),
-            'password': os.getenv("DB_PASS"),
-
-        }
+        'USER': os.getenv("DB_USER"),
+        'PASSWORD': os.getenv("DB_PASS", ""),
+        'HOST': os.getenv("DB_HOST", ""),
+        'PORT': os.getenv("DB_PORT"),
     }
 }
 
