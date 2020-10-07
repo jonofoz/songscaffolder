@@ -3,7 +3,6 @@ import sys
 import hashlib
 import time
 import json
-import requests
 from random import randint
 from datetime import datetime
 from lxml import html
