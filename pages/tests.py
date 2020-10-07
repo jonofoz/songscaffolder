@@ -1,10 +1,4 @@
-import os
-import sys
-import hashlib
-import time
 import json
-from random import randint
-from datetime import datetime
 from lxml import html
 
 from django.test import TestCase, Client
@@ -39,26 +33,15 @@ example_scaffold_config = {
 }
 # Create your tests here.
 
-def generate_test_username():
-    name_hash = hashlib.md5()
-    random_int_list = []
-    for i in range(5):
-        random_int_list.append(str(randint(0, 5000)))
-    complicated_username_suffix = datetime.now().strftime("%H:%M:%S") + "_".join(random_int_list)
-    name_hash.update(complicated_username_suffix.encode('ASCII'))
-    return f"{ss_test_user_name}_{name_hash.hexdigest()}"
-
-
 def clear_test_data():
     try:
-        test_users = User.objects.filter(username__startswith="SongScaffolderTestUser")
-        test_users.delete()
+        User.objects.filter(username=ss_test_user_name).delete()
     except:
         pass
 
 class BaseTestClass(TestCase):
     def setUp(self):
-        self.username = generate_test_username()
+        self.username = ss_test_user_name
         self.client = Client()
         # Check if setup should be skipped.
         method = getattr(self, self._testMethodName)
