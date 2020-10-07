@@ -19,11 +19,6 @@ TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
 STATIC_DIR = os.path.join(BASE_DIR, "static")
 
 load_dotenv(dotenv_path=os.path.join(BASE_DIR, ".env"))
-try:
-    os.getenv("DB_USER")
-except KeyError:
-    # Handled by Travis for testing purposes.
-    raise
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -98,22 +93,16 @@ WSGI_APPLICATION = 'SongScaffolder.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-
-
 DATABASES = {
     'default': {
-        'ENGINE': 'djongo',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv("DB_NAME"),
-        'CLIENT': {
-            'host': f'mongodb+srv://{os.getenv("DB_USER")}:{os.getenv("DB_PASS")}@{os.getenv("DB_PATH")}?retryWrites=true&w=majority',
-            'port': 27017,
-            'username': os.getenv("DB_USER"),
-            'password': os.getenv("DB_PASS"),
-
-        }
+        'USER': os.getenv("DB_USER"),
+        'PASSWORD': os.getenv("DB_PASS", ""),
+        'HOST': os.getenv("DB_HOST", ""),
+        'PORT': os.getenv("DB_PORT"),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
