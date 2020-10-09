@@ -53,7 +53,7 @@ def user_login(request):
             login(request, authorized_user)
             username = form.cleaned_data["username"]
             password = form.cleaned_data["password"]
-            user_data = UserData.objects.get(user=User.objects.get(username=username))
+            user_data = UserData.objects.get_or_create(user=User.objects.get(username=username))[0]
             metadata = {
                 "username": user_data.user.username,
                 "user_data": {
