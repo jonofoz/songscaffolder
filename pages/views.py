@@ -64,8 +64,6 @@ def user_login(request):
             request.session["metadata"] = metadata
             request.session.save()
             return HttpResponseRedirect(reverse('pages:index'))
-        else:
-            raise forms.ValidationError(form.errors)
     else:
         form = LoginForm()
 
@@ -86,8 +84,6 @@ def user_signup(request):
             user_data = UserData(user=user, saved_scaffolds=[], scaffold_config={})
             user_data.save()
             return redirect("pages:login")
-        else:
-            raise forms.ValidationError(form.errors)
     else:
         form = UserCreationForm()
     return render(request, "pages/auth/signup.html", {"form": form})
