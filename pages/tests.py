@@ -160,16 +160,16 @@ class UserTestCase(BaseTestClass):
         # GET (Checking if results were actually saved)
         response = self.client.get("/config/chords")
         tree = html.fromstring(response.content)
-        keys_values = sorted([(k,v) for k,v in self.user_data.scaffold_config["chords"].items()])
+        keys_values = [(k,v) for k,v in self.user_data.scaffold_config["chords"].items()]
         keys = tree.xpath("//input[@placeholder='Edit Me!']")
+        keys = sorted([k.value for k in keys])
         values = tree.xpath("//li[contains(@class, 'page-item') and contains(@class, 'active')]")
+        values = sorted([v.text_content() for v in values])
         self.assertEqual(len(keys), 5)
         self.assertEqual(len(values), 5)
-        for i, k_v in enumerate(keys_values):
-            k, v = k_v
-            # Here we assert that the HTML content reflects the user's data.
-            self.assertEqual(keys[i].value, k)
-            self.assertEqual(int(values[i].text_content()), v)
+        # Here we assert that the HTML content reflects the user's data.
+        self.assertEqual(keys,   sorted([i[0]      for i in keys_values]))
+        self.assertEqual(values, sorted([str(i[1]) for i in keys_values]))
 
     def test_make_scaffold_good(self):
         response = self.client.post(reverse("pages:login"), {"username": self.username, "password": ss_test_user_pass}, follow=True)
