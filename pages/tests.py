@@ -95,7 +95,6 @@ class UserTestCase(BaseTestClass):
         self.assertEqual(user_data.saved_scaffolds, [])
         self.assertEqual(user_data.scaffold_config, {})
 
-
     def test_login(self):
         # GET
         response = self.client.get(reverse("pages:login"))
@@ -110,6 +109,25 @@ class UserTestCase(BaseTestClass):
         content_decoded = response.content.decode("utf-8")
         self.assertTrue("<title>\n        \nSongScaffolder\n\n    </title>" in content_decoded)
         self.assertTrue(f"(Hi, {self.username}!)" in content_decoded)
+
+    def test_login_no_userdata(self):
+        # Here we're going to prove that logging in as a valid user will generate a default UserData object
+        # if the UserData object DNE for that user.
+        self.user_data.delete()
+        # GET
+        response = self.client.get(reverse("pages:login"))
+        self.assertEqual(response.resolver_match.func.__name__, "user_login")
+        self.assertEqual(response.status_code, 200)
+        # POST
+        response = self.client.post(reverse("pages:login"), {"username": self.username, "password": ss_test_user_pass}, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.redirect_chain, [('/', 302)])
+        # Now, let's check if the UserData is there.
+        user_data = UserData.objects.get(user=self.user)
+        self.assertEqual(user_data.user.username, ss_test_user_name)
+        self.assertEqual(user_data.scaffold_config, {})
+        self.assertEqual(user_data.saved_scaffolds, [])
+
 
 
     def test_config(self):
