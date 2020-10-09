@@ -10,6 +10,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from .forms import LoginForm
@@ -64,7 +65,7 @@ def user_login(request):
             request.session.save()
             return HttpResponseRedirect(reverse('pages:index'))
         else:
-            pass
+            raise forms.ValidationError(form.errors)
     else:
         form = LoginForm()
 
@@ -92,18 +93,26 @@ def user_signup(request):
     return render(request, "pages/auth/signup.html", {"form": form})
 
 @login_required
+@csrf_exempt
 def make_scaffold(request):
-    attributes = {k: v["include"] for k,v in json.loads(request.GET["metadata"]).items()}
-    quantities = {k: v["quantity"] for k, v in json.loads(request.GET["metadata"]).items() if "quantity" in v}
+    directives = json.loads(request.POST["directives"])
+    attributes = {k: v["include"]  for k, v in directives.items()}
+    quantities = {k: v["quantity"] for k, v in directives.items() if "quantity" in v}
+
+    user_data = UserData.objects.get(user=User.objects.get(username=request.user.username))
+    metadata = user_data.scaffold_config
     with SongScaffolder(
-        metadata=request.session["metadata"]["user_data"]["scaffold_config"],
+        metadata=metadata,
         attributes=attributes,
         quantities=quantities) as scaffolder:
         results = scaffolder.get_json_results()
         if results == {}:
             results = {"You selected nothing!": ["Please select a field to include."]}
         else:
-            results = {k.replace("-", " ").title(): v for k, v in results.items()}
+            if "use_title_case" in request.POST and request.POST["use_title_case"] == 'true':
+                results = {k.replace("-", " ").title(): v for k, v in results.items()}
+            else:
+                results = {k.replace("-", " "): v for k, v in results.items()}
         return JsonResponse(results)
 
 @login_required
