@@ -133,7 +133,7 @@
         checkScreenSize();
     });
 
-    $(document).on("click", "#button-delete-all", function() {
+    $(document).on("click", ".button-delete-all", function() {
         $(".config-row").remove()
         checkWhatShouldBeDisplayed()
         return false
@@ -163,7 +163,7 @@
         return false
     });
 
-    $("#button-save").on("click", function(){
+    $(document).on("click", ".button-save", function(){
         configRows = $('.config-row')
         newConfigData = {}
         for (i=0; i < configRows.length; i++){
