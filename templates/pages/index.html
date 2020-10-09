@@ -109,7 +109,7 @@ SongScaffolder
 
                         </tbody>
                     </table>
-                    <div id="what-the-heck-section"></div>
+                    <div id="section-scaffold-modal-buttons"></div>
                 </div>
             </div>
         </div>
@@ -155,118 +155,149 @@ SongScaffolder
                 "Carry that weight!",
             ];
             // First, we'll clear any old scaffold results.
-            tbody = $("tbody")
-            sectionWTH = $("#what-the-heck-section")
-            scaffoldQuote = $("#scaffold-quote")
-            tbody.children().remove()
-            sectionWTH.children().remove()
-            scaffoldQuote.html("")
+            tbody = $("tbody");
+            sectionWTH = $("#section-scaffold-modal-buttons");
+            scaffoldQuote = $("#scaffold-quote");
+            tbody.children().remove();
+            sectionWTH.children().remove();
+            scaffoldQuote.html("");
 
-            metadata = {}
-            switches = $("input[id^='switch-include_']").filter(":visible")
-            buttons  = $("input[id^='button-include_']").filter(":visible")
-            onMediumScreen = true ? buttons.length > 0 : false
-            console.log(switches.length)
-            quantities = $(`input[id^="quantity-for_"]`).filter(":visible")
-            for (i = 0; i < quantities.length; i++){
-                fieldName = quantities[i].id.split("_")[1]
-                quantityForm = $(`input[id^="quantity-for_${fieldName}"]`)
-                fieldValue = quantityForm.val() != "" ? parseInt(quantityForm.val()) : 1
+            directives = {}
+            switches = $("input[id^='switch-include_']").filter(":visible");
+            buttons  = $("input[id^='button-include_']").filter(":visible");
+            onMediumScreen = true ? buttons.length > 0 : false;
+
+            // There's no point in pinging the backend if no field was selected: we assume this is so, at first!
+            atLeastOneFieldSelected = false;
+
+            quantities = $(`input[id^="quantity-for_"]`).filter(":visible");
+            for (i = 0; i < quantities.length; i++) {
+                fieldName = quantities[i].id.split("_")[1];
+                quantityForm = $(`input[id^="quantity-for_${fieldName}"]`);
+                fieldValue = quantityForm.val() != "" ? parseInt(quantityForm.val()) : 1;
                 if (onMediumScreen) {
                     if (!(buttons[i].getAttribute("class").includes("btn-off"))){
-                        metadata[fieldName] = {
+                        directives[fieldName] = {
                             "include": true,
                             "quantity": fieldValue
                         }
+                        atLeastOneFieldSelected = true;
                     }
                     else {
-                        metadata[fieldName] = {
+                        directives[fieldName] = {
                             "include": false
                         }
                     }
                 }
                 else {
                     if (switches[i].checked == true){
-                        metadata[fieldName] = {
+                        directives[fieldName] = {
                             "include": true,
                             "quantity": fieldValue
                         }
+                        atLeastOneFieldSelected = true;
                     }
                     else {
-                        metadata[fieldName] = {
+                        directives[fieldName] = {
                             "include": false
                         }
                     }
                 }
             }
-            $.ajax({
-                type: "GET",
-                url: "{% url 'pages:make-scaffold' %}",
-                dataType: "json",
-                data: {
-                    "metadata": JSON.stringify(metadata)
-                },
-                success: function(data){
-                    for (const [key, value] of Object.entries(data)){
+            if (atLeastOneFieldSelected) {
+                console.log(directives)
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'pages:make-scaffold' %}",
+                    dataType: "json",
+                    data: {
+                        "directives": JSON.stringify(directives),
+                        "use_title_case": true
+                    },
+                    success: function(data){
+                        for (const [key, value] of Object.entries(data)){
+                            tbody.append(
+                                `
+                                    <tr>
+                                        <td>${key}</td>
+                                        <td>${value.join(', ')}</td>
+                                    </tr>
+                                `
+                            );
+                        }
+
+                        result = data
+                        thereWasUndefinedData = false;
+                        for (field in data) {
+                            if (data[field][0].startsWith("UNDEFINED:")){
+                                thereWasUndefinedData = true;
+                            }
+                        }
+                        if (thereWasUndefinedData){
+                            scaffoldQuote.html("There were some problems...")
+                        }
+                        else {
+                            scaffoldQuote.html(scaffoldQuotes[Math.floor(Math.random() * scaffoldQuotes.length)])
+                        }
+                        $("#section-scaffold-modal-buttons").append(
+                            `
+                                <br>
+                                <div class="row">
+                                    <div class="col-6 justify-content-center">
+                                        <button class="btn btn-grey btn-block btn-small" id="btn-what-the-heck" onclick="location.href={% url 'pages:what-the-heck' %};"> What the heck?</button>
+                                    </div>
+                                    <div class="col-6 justify-content-center">
+                                        <button class="btn btn-green btn-block btn-small btn-confirm" data-dismiss="modal">OK!</button>
+                                    </div>
+                                </div>
+                            `)
+                    },
+                    failure: function(data){
+                        scaffoldQuote.html("Hmm...")
                         tbody.append(
-                            `
-                                <tr>
-                                    <td>${key}</td>
-                                    <td>${value.join(', ')}</td>
-                                </tr>
-                            `
-                        );
-                    }
-                    if (Object.entries(data)[0][0] != "You selected nothing!") {
-                        scaffoldQuote.html(scaffoldQuotes[Math.floor(Math.random() * scaffoldQuotes.length)])
-                        $("#what-the-heck-section").append(`
-                        <br>
-                        <div class="row">
-                            <div class="col-6 justify-content-center">
-                                <button class="btn btn-grey btn-block btn-small" id="btn-what-the-heck" onclick="location.href={% url 'pages:what-the-heck' %};"> What the heck?</button>
-                            </div>
-                            <div class="col-6 justify-content-center">
-                                <button class="btn btn-green btn-block btn-small btn-confirm" data-dismiss="modal">OK!</button>
-                            </div>
-                        </div>
-                        `)
-                    }
-                    else {
-                        scaffoldQuote.html("Whoops 🔌")
-                        $("#what-the-heck-section").append(`
-                        <br>
-                        <div class="row">
-                            <div class="col-12 justify-content-center">
-                                <button class="btn btn-green btn-block btn-small btn-confirm" data-dismiss="modal">Ope sorry</button>
-                            </div>
-                        </div>
-                        `)
-                    }
-                },
-                failure: function(data){
-                    scaffoldQuote.html("Hmm...")
-                    tbody.append(
                             `
                                 <tr>
                                     <td>There was a failure.</td>
                                     <td>We're not sure why.</td>
                                 </tr>
                             `
-                    )
-                },
-                error: function(xhr, status, error){
-                    scaffoldQuote.html("🤯")
-                    var errorMessage = xhr.status + ': ' + xhr.statusText
-                    tbody.append(
+                        )
+                    },
+                    error: function(xhr, status, error){
+                        scaffoldQuote.html("🤯")
+                        var errorMessage = xhr.status + ': ' + xhr.statusText
+                        tbody.append(
                             `
                                 <tr>
                                     <td>There was an error:</td>
                                     <td>${errorMessage}</td>
                                 </tr>
                             `
-                    )
-                }
-            });
+                        )
+                    }
+                });
+            }
+            else {
+                scaffoldQuote.html("Whoops 🔌")
+                tbody.append(
+                    `
+                        <tr>
+                            <td>You selected nothing!</td>
+                            <td>Please select at least one field to include.</td>
+                        </tr>
+                    `
+                )
+                $("#section-scaffold-modal-buttons").append(
+                    `
+                        <br>
+                        <div class="row">
+                            <div class="col-12 justify-content-center">
+                                <button class="btn btn-green btn-block btn-small btn-confirm" data-dismiss="modal">Ah snap</button>
+                            </div>
+                        </div>
+                    `
+                )
+            }
         });
     </script>
 {% endblock %}
