@@ -95,7 +95,7 @@ class UserTestCase(BaseTestClass):
         self.assertEqual(user_data.saved_scaffolds, [])
         self.assertEqual(user_data.scaffold_config, {})
 
-    def test_login(self):
+    def test_login_valid(self):
         # GET
         response = self.client.get(reverse("pages:login"))
         self.assertEqual(response.resolver_match.func.__name__, "user_login")
@@ -110,9 +110,16 @@ class UserTestCase(BaseTestClass):
         self.assertTrue("<title>\n        \nSongScaffolder\n\n    </title>" in content_decoded)
         self.assertTrue(f"(Hi, {self.username}!)" in content_decoded)
 
+    def test_login_invalid(self):
+        response = self.client.post(reverse("pages:login"), {"username": self.username, "password": ss_test_user_pass+"Corn"}, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.redirect_chain, [])
+        self.assertFalse(response.context["form"].is_valid())
+        self.assertEqual(response.context["form"].errors["__all__"][0], "Sorry, that login was invalid. Please try again.")
+
     def test_login_no_userdata(self):
-        # Here we're going to prove that logging in as a valid user will generate a default UserData object
-        # if the UserData object DNE for that user.
+        # Here we're going to prove that logging in as a valid user will generate a default UserData object if
+        # the UserData object DNE for that user. First, we have delete the UserData generated during setup.
         self.user_data.delete()
         # GET
         response = self.client.get(reverse("pages:login"))
@@ -128,7 +135,14 @@ class UserTestCase(BaseTestClass):
         self.assertEqual(user_data.scaffold_config, {})
         self.assertEqual(user_data.saved_scaffolds, [])
 
-
+    def test_remove_user(self):
+        # Here we're going to prove that removing a User will also remove their corresponding UserData.
+        # First, we make sure both the user and the data exist.
+        self.assertTrue(self.user)
+        self.assertTrue(self.user_data)
+        self.assertEqual(len(UserData.objects.all()), 1)
+        self.user_data.delete()
+        self.assertEqual(len(UserData.objects.all()), 0)
 
     def test_config(self):
         response = self.client.post(reverse("pages:login"), {"username": self.username, "password": ss_test_user_pass}, follow=True)
@@ -148,13 +162,14 @@ class UserTestCase(BaseTestClass):
         tree = html.fromstring(response.content)
         keys_values = [(k,v) for k,v in self.user_data.scaffold_config["chords"].items()]
         keys = tree.xpath("//input[@placeholder='Edit Me!']")
+        keys = sorted([k.value for k in keys])
         values = tree.xpath("//li[contains(@class, 'page-item') and contains(@class, 'active')]")
+        values = sorted([v.text_content() for v in values])
         self.assertEqual(len(keys), 5)
         self.assertEqual(len(values), 5)
-        for i, k_v in enumerate(keys_values):
-            k, v = k_v
-            self.assertEqual(keys[i].value, k)
-            self.assertEqual(int(values[i].text_content()), v)
+        # Here we assert that the HTML content reflects the user's data.
+        self.assertEqual(keys,   sorted([i[0]      for i in keys_values]))
+        self.assertEqual(values, sorted([str(i[1]) for i in keys_values]))
 
     def test_make_scaffold_good(self):
         response = self.client.post(reverse("pages:login"), {"username": self.username, "password": ss_test_user_pass}, follow=True)
@@ -187,6 +202,24 @@ class UserTestCase(BaseTestClass):
         # It should be 5 now
         self.assertEqual(len(content_decoded["chords"]), 5)
         self.assertEqual(sorted(content_decoded["chords"]), ['5', 'Elektra', 'Maj7', 'aug7', 'm9'])
+
+        # Here we're making sure a test doesn't return the same results more
+        # than 3 times in a row given a sufficiently large dataset.
+        directives["chords"]["quantity"] = 3
+        last_results = None
+        results_are_different = False
+        for i in range(4):
+            response = self.client.post(reverse("pages:make-scaffold"), {"directives": json.dumps(directives)}, follow=True)
+            new_results = json.loads(response.content.decode("utf-8"))["chords"]
+            if last_results == None:
+                last_results = new_results
+            else:
+                if last_results != new_results:
+                    results_are_different = True
+                    break
+                else:
+                    last_results = new_results
+        self.assertTrue(results_are_different)
 
 
     def test_make_scaffold_missing_data(self):
