@@ -1,11 +1,14 @@
 import os
-from random import randint as r_int
+from random import randint
 
 def _get_subset(data):
-    return [k for k,v in data.items() if v >= r_int(1,5)]
+    chance = randint(1,5)
+    return [k for k,v in data.items() if v >= chance]
 
 def _pick_random(data):
-    return data[r_int(0, len(data) - 1)]
+    if len(data) > 0:
+        return data[randint(0, len(data) - 1)]
+    return data
 
 def _count_keys_in_dict(data):
     total_keys = 0
@@ -55,18 +58,21 @@ class SongScaffolder(object):
         def _more_results_than_data(data, results_wanted):
             return True if results_wanted > _count_keys_in_dict(data) else False
 
-        results = []
-        source_metadata = {attr:freq for attr, freq in self.metadata[attr_title].items() if freq != 0}
+        if attr_title not in self.metadata:
+            return ["UNDEFINED: you have no data for this!"]
+        else:
+            final_results = []
+            source_metadata = {attr:freq for attr, freq in self.metadata[attr_title].items() if freq != 0}
 
-        if _more_results_than_data(source_metadata, results_left):
-            all_results = [res for res in source_metadata.keys()]
-            # TODO: Return as warning to user.
-            print(f"\nWARNING: The number of requested results ({results_left}) for '{attr_title}' was greater than the " \
-                  f"number of unique results ({len(all_results)}) available from the data. Returning all results.\n")
-            return all_results
+            if _more_results_than_data(source_metadata, results_left):
+                all_results = [res for res in source_metadata.keys()]
+                # TODO: Return as warning to user.
+                print(f"\nWARNING: The number of requested results ({results_left}) for '{attr_title}' was greater than the " \
+                    f"number of unique results ({len(all_results)}) available from the data. Returning all results.\n")
+                return all_results
 
-        while results_left > 0:
-            result = _pick_random(_get_subset(source_metadata))
-            results_left = _try_append_result(result, results, results_left)
-
-        return results
+            while results_left > 0:
+                result = _pick_random(_get_subset(source_metadata))
+                if result != []:
+                    results_left = _try_append_result(result, final_results, results_left)
+            return final_results
