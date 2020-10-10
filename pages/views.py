@@ -27,19 +27,8 @@ def index(request):
         "fields": []
     }
 
-    for title, *_, info in [
-        ("Chords", "Checking this will include random chords into the scaffold. These chords are specified by clicking the respective list icon."),
-        ("Feels", ""),
-        ("Genres", ""),
-        ("Influences", ""),
-        ("Instruments", ""),
-        ("Key Signatures", ""),
-        ("Moods", ""),
-        ("Themes", ""),
-        ("Time Signatures", ""),
-    ]:
-        info = f"Checking this will include random <span class='tooltip-bold'>{title.lower()}</span> into the scaffold. These are defined under the corresponding <a class=\"fa fa-list fa-list-small\"></a> button."
-        # info = f"Checking this will include random <span class='tooltip-bold'>{title.lower()}</span> into the scaffold. These are defined under <em>\"I Define Them Here.\"</em>"
+    for title in ["Chords" "Feels", "Genres", "Influences", "Instruments", "Key Signatures", "Moods", "Themes", "Time Signatures"]:
+        info = f"Checking this will include random results from the below fields into the scaffold. The data for these results are defined under the corresponding <a class=\"fa fa-list fa-list-small\"></a> button."
         context["fields"].append ({
             "title": title,
             "id": title.replace(" ","-").lower(),
@@ -58,15 +47,6 @@ def user_login(request):
             username = form.cleaned_data["username"]
             password = form.cleaned_data["password"]
             user_data = UserData.objects.get_or_create(user=UserModel.objects.get(Q(username__iexact=username) | Q(email__iexact=username)))[0]
-            metadata = {
-                "username": user_data.user.username,
-                "user_data": {
-                    "saved_scaffolds": user_data.saved_scaffolds,
-                    "scaffold_config": user_data.scaffold_config
-                }
-            }
-            request.session["metadata"] = metadata
-            request.session.save()
             return HttpResponseRedirect(reverse('pages:index'))
     else:
         form = LoginForm()
