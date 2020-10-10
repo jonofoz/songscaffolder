@@ -3,10 +3,12 @@ from lxml import html
 
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
+from django.contrib.auth import logout
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.test.utils import tag
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from django.contrib.sessions.models import Session
 from field.models import UserData
 
 UserModel = get_user_model()
@@ -48,7 +50,8 @@ example_scaffold_directives = {
     'time-signatures': {'include': False}
 }
 
-test_login_data = {"username": ss_test_user_name, "password": ss_test_user_pass}
+login_data_using_name  = {"username": ss_test_user_name,  "password": ss_test_user_pass}
+login_data_using_email = {"username": ss_test_user_email, "password": ss_test_user_pass}
 
 def clear_test_data():
     try:
@@ -102,18 +105,20 @@ class UserTestCase(BaseTestClass):
         self.assertEqual(user_data.saved_scaffolds, [])
         self.assertEqual(user_data.scaffold_config, {})
 
-    def test_login_valid(self):
-        # GET
-        response = self.client.get(reverse("pages:login"))
-        self.assertEqual(response.resolver_match.func.__name__, "user_login")
-        self.assertEqual(response.status_code, 200)
-        # POST
-        response = self.client.post(reverse("pages:login"), test_login_data, follow=True)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.redirect_chain, [('/', 302)])
-        content_decoded = response.content.decode("utf-8")
-        self.assertTrue("<title>\n        \nSongScaffolder\n\n    </title>" in content_decoded)
-        self.assertTrue(f"(Hi, {self.username}!)" in content_decoded)
+    def test_login(self):
+        for login_data in [login_data_using_name, login_data_using_email]:
+            # GET
+            response = self.client.get(reverse("pages:login"))
+            self.assertEqual(response.resolver_match.func.__name__, "user_login")
+            self.assertEqual(response.status_code, 200)
+            # POST
+            response = self.client.post(reverse("pages:login"), login_data, follow=True)
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.redirect_chain, [('/', 302)])
+            content_decoded = response.content.decode("utf-8")
+            self.assertTrue("<title>\n        \nSongScaffolder\n\n    </title>" in content_decoded)
+            self.assertTrue(f"(Hi, {self.username}!)" in content_decoded)
+            Session.objects.all().delete()
 
     def test_login_invalid(self):
         response = self.client.post(reverse("pages:login"), {"username": self.username, "password": self.password+"Corn"}, follow=True)
@@ -131,7 +136,7 @@ class UserTestCase(BaseTestClass):
         self.assertEqual(response.resolver_match.func.__name__, "user_login")
         self.assertEqual(response.status_code, 200)
         # POST
-        response = self.client.post(reverse("pages:login"), test_login_data, follow=True)
+        response = self.client.post(reverse("pages:login"), login_data_using_email, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.redirect_chain, [('/', 302)])
         # Now, let's check if the UserData is there.
@@ -150,7 +155,7 @@ class UserTestCase(BaseTestClass):
         self.assertEqual(len(UserData.objects.all()), 0)
 
     def test_config(self):
-        response = self.client.post(reverse("pages:login"), test_login_data, follow=True)
+        response = self.client.post(reverse("pages:login"), login_data_using_name, follow=True)
         # GET
         response = self.client.get("/config/chords")
         self.assertEqual(response.resolver_match.func.__name__, "config")
@@ -177,7 +182,7 @@ class UserTestCase(BaseTestClass):
         self.assertEqual(values, sorted([str(i[1]) for i in keys_values]))
 
     def test_make_scaffold_good(self):
-        response = self.client.post(reverse("pages:login"), test_login_data, follow=True)
+        response = self.client.post(reverse("pages:login"), login_data_using_email, follow=True)
 
         # Test making scaffold with 1 chord requested
         directives = example_scaffold_directives.copy()
@@ -228,7 +233,7 @@ class UserTestCase(BaseTestClass):
 
 
     def test_make_scaffold_missing_data(self):
-        response = self.client.post(reverse("pages:login"), test_login_data, follow=True)
+        response = self.client.post(reverse("pages:login"), login_data_using_name, follow=True)
 
         # Test making scaffold with no feels, even though they're requested
         directives = example_scaffold_directives.copy()
