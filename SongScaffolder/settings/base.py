@@ -32,6 +32,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
+AUTHENTICATION_BACKENDS = ['field.models.ModelBackend']
 
 # Application definition
 
