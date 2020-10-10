@@ -5,7 +5,10 @@ sys.path.append(os.path.join("..", ".."))
 from backend.scaffolder import SongScaffolder
 
 from django import forms
+from field.models import UserData
+from django.db.models import Q
 from django.http import HttpResponseRedirect, JsonResponse
+from django.contrib.auth import backends, get_user_model
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth import login, logout, authenticate
@@ -13,8 +16,9 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .forms import LoginForm
-from field.models import UserData
+from .forms import LoginForm, UserSignupForm
+
+UserModel = get_user_model()
 
 # Create your views here.
 @login_required
@@ -53,7 +57,7 @@ def user_login(request):
             login(request, authorized_user)
             username = form.cleaned_data["username"]
             password = form.cleaned_data["password"]
-            user_data = UserData.objects.get_or_create(user=User.objects.get(username=username))[0]
+            user_data = UserData.objects.get_or_create(user=UserModel.objects.get(Q(username__iexact=username) | Q(email__iexact=username)))[0]
             metadata = {
                 "username": user_data.user.username,
                 "user_data": {
@@ -76,16 +80,16 @@ def user_logout(request):
 
 def user_signup(request):
     if request.method == "POST":
-        form = UserCreationForm(request.POST)
+        form = UserSignupForm(request.POST)
         if form.is_valid():
             form.save(commit=True)
             username = form.cleaned_data["username"]
-            user = User.objects.get(username=username)
+            user = UserModel.objects.get(Q(username__iexact=username) | Q(email__iexact=username))
             user_data = UserData(user=user, saved_scaffolds=[], scaffold_config={})
             user_data.save()
             return redirect("pages:login")
     else:
-        form = UserCreationForm()
+        form = UserSignupForm()
     return render(request, "pages/auth/signup.html", {"form": form})
 
 @login_required
@@ -94,8 +98,7 @@ def make_scaffold(request):
     directives = json.loads(request.POST["directives"])
     attributes = {k: v["include"]  for k, v in directives.items()}
     quantities = {k: v["quantity"] for k, v in directives.items() if "quantity" in v}
-
-    user_data = UserData.objects.get(user=User.objects.get(username=request.user.username))
+    user_data = UserData.objects.get(user=UserModel.objects.get(Q(username__iexact=request.user.username) | Q(email__iexact=request.user.email)))
     metadata = user_data.scaffold_config
     with SongScaffolder(
         metadata=metadata,
