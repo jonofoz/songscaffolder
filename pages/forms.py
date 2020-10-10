@@ -47,4 +47,8 @@ class UserSignupForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-
+    def clean_email(self):
+        email=self.cleaned_data.get("email")
+        if UserModel.objects.filter(email=email).count() > 0:
+            raise forms.ValidationError("Whoops, an account with that email already exists.")
+        return email
