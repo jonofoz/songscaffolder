@@ -239,6 +239,16 @@ a:active {
 a {
   color: var(--dark-green);
 }
+a:hover {
+  color: var(--primary-green);
+}
+a:active {
+  color: var(--dark-green);
+}
+
+a.fa, a.fa:active {
+  color: var(--white);
+}
 
 .hello-user {
   font-family: 'Grandstander', cursive;
