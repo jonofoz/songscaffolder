@@ -236,8 +236,8 @@ a:active {
   text-align: center;
 }
 
-.footer a {
-  color: var(--link);
+a {
+  color: var(--dark-green);
 }
 
 .hello-user {
