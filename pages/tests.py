@@ -3,13 +3,17 @@ from lxml import html
 
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.test.utils import tag
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from field.models import UserData
 
-ss_test_user_name = "SongScaffolderTestUser"
-ss_test_user_pass = "IsThi$Pa$$w0rdGoodEnough4Ye"
+UserModel = get_user_model()
+
+ss_test_user_name  = "SongScaffolderTestUser"
+ss_test_user_email = "SongScaffolderTestUser@geemayle.com"
+ss_test_user_pass  = "IsThi$Pa$$w0rdGoodEnough4Ye"
 
 example_saved_scaffolds = []
 example_scaffold_config = {
@@ -44,10 +48,11 @@ example_scaffold_directives = {
     'time-signatures': {'include': False}
 }
 
+test_login_data = {"username": ss_test_user_name, "password": ss_test_user_pass}
 
 def clear_test_data():
     try:
-        User.objects.get(username=ss_test_user_name).delete()
+        UserModel.objects.get(username=ss_test_user_name).delete()
     except:
         pass
 
@@ -55,6 +60,8 @@ class BaseTestClass(TestCase):
 
     def setUp(self):
         self.username = ss_test_user_name
+        self.email = ss_test_user_email
+        self.password = ss_test_user_pass
         self.client = Client()
         # Check if setup should be skipped.
         method = getattr(self, self._testMethodName)
@@ -65,7 +72,7 @@ class BaseTestClass(TestCase):
 
         clear_test_data()
 
-        self.user = User.objects.create_user(username=self.username, password=ss_test_user_pass)
+        self.user = UserModel.objects.create_user(username=self.username, email=self.email, password=self.password)
         self.user.save()
         self.user_data = UserData(user=self.user, saved_scaffolds=example_saved_scaffolds, scaffold_config=example_scaffold_config)
         self.user_data.save()
@@ -82,7 +89,7 @@ class UserTestCase(BaseTestClass):
         self.assertEqual(response.resolver_match.func.__name__, "user_signup")
         self.assertEqual(response.status_code, 200)
         # POST
-        response = self.client.post(reverse("pages:signup"), {"username": self.username, "password1": ss_test_user_pass, "password2": ss_test_user_pass}, follow=True)
+        response = self.client.post(reverse("pages:signup"), {"username": self.username, "email": self.email, "password1": self.password, "password2": self.password}, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.redirect_chain, [('/login/', 302)])
         self.assertEqual(response.context["user"].username, '')
@@ -91,7 +98,7 @@ class UserTestCase(BaseTestClass):
         self.assertFalse(f"(Hi, {self.username}!)" in content_decoded)
         self.assertTrue("<title>\n        \nLogin\n\n    </title>" in content_decoded)
         # Test UserData
-        user_data = UserData.objects.get(user=User.objects.get(username=self.username))
+        user_data = UserData.objects.get(user=UserModel.objects.get(username=self.username))
         self.assertEqual(user_data.saved_scaffolds, [])
         self.assertEqual(user_data.scaffold_config, {})
 
@@ -101,17 +108,15 @@ class UserTestCase(BaseTestClass):
         self.assertEqual(response.resolver_match.func.__name__, "user_login")
         self.assertEqual(response.status_code, 200)
         # POST
-        response = self.client.post(reverse("pages:login"), {"username": self.username, "password": ss_test_user_pass}, follow=True)
+        response = self.client.post(reverse("pages:login"), test_login_data, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.redirect_chain, [('/', 302)])
-        self.assertEqual(   response.context["user"].username, self.username)
-        self.assertNotEqual(response.context["user"].password, ss_test_user_pass)
         content_decoded = response.content.decode("utf-8")
         self.assertTrue("<title>\n        \nSongScaffolder\n\n    </title>" in content_decoded)
         self.assertTrue(f"(Hi, {self.username}!)" in content_decoded)
 
     def test_login_invalid(self):
-        response = self.client.post(reverse("pages:login"), {"username": self.username, "password": ss_test_user_pass+"Corn"}, follow=True)
+        response = self.client.post(reverse("pages:login"), {"username": self.username, "password": self.password+"Corn"}, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.redirect_chain, [])
         self.assertFalse(response.context["form"].is_valid())
@@ -126,12 +131,12 @@ class UserTestCase(BaseTestClass):
         self.assertEqual(response.resolver_match.func.__name__, "user_login")
         self.assertEqual(response.status_code, 200)
         # POST
-        response = self.client.post(reverse("pages:login"), {"username": self.username, "password": ss_test_user_pass}, follow=True)
+        response = self.client.post(reverse("pages:login"), test_login_data, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.redirect_chain, [('/', 302)])
         # Now, let's check if the UserData is there.
         user_data = UserData.objects.get(user=self.user)
-        self.assertEqual(user_data.user.username, ss_test_user_name)
+        self.assertEqual(user_data.user.username, self.username)
         self.assertEqual(user_data.scaffold_config, {})
         self.assertEqual(user_data.saved_scaffolds, [])
 
@@ -145,7 +150,7 @@ class UserTestCase(BaseTestClass):
         self.assertEqual(len(UserData.objects.all()), 0)
 
     def test_config(self):
-        response = self.client.post(reverse("pages:login"), {"username": self.username, "password": ss_test_user_pass}, follow=True)
+        response = self.client.post(reverse("pages:login"), test_login_data, follow=True)
         # GET
         response = self.client.get("/config/chords")
         self.assertEqual(response.resolver_match.func.__name__, "config")
@@ -172,7 +177,7 @@ class UserTestCase(BaseTestClass):
         self.assertEqual(values, sorted([str(i[1]) for i in keys_values]))
 
     def test_make_scaffold_good(self):
-        response = self.client.post(reverse("pages:login"), {"username": self.username, "password": ss_test_user_pass}, follow=True)
+        response = self.client.post(reverse("pages:login"), test_login_data, follow=True)
 
         # Test making scaffold with 1 chord requested
         directives = example_scaffold_directives.copy()
@@ -223,7 +228,7 @@ class UserTestCase(BaseTestClass):
 
 
     def test_make_scaffold_missing_data(self):
-        response = self.client.post(reverse("pages:login"), {"username": self.username, "password": ss_test_user_pass}, follow=True)
+        response = self.client.post(reverse("pages:login"), test_login_data, follow=True)
 
         # Test making scaffold with no feels, even though they're requested
         directives = example_scaffold_directives.copy()
