@@ -27,7 +27,7 @@ def index(request):
         "fields": []
     }
 
-    for title in ["Chords" "Feels", "Genres", "Influences", "Instruments", "Key Signatures", "Moods", "Themes", "Time Signatures"]:
+    for title in ["Chords", "Feels", "Genres", "Influences", "Instruments", "Key Signatures", "Moods", "Themes", "Time Signatures"]:
         info = f"Checking this will include random results from the below fields into the scaffold. The data for these results are defined under the corresponding <a class=\"fa fa-list fa-list-small\"></a> button."
         context["fields"].append ({
             "title": title,
