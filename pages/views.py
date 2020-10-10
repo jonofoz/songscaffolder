@@ -16,7 +16,10 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from django.forms.utils import ErrorList
+from django.forms.forms import NON_FIELD_ERRORS
 from .forms import LoginForm, UserSignupForm
+from backend import generate_starter_data
 
 UserModel = get_user_model()
 
@@ -62,12 +65,26 @@ def user_signup(request):
     if request.method == "POST":
         form = UserSignupForm(request.POST)
         if form.is_valid():
-            form.save(commit=True)
             username = form.cleaned_data["username"]
-            user = UserModel.objects.get(Q(username__iexact=username) | Q(email__iexact=username))
-            user_data = UserData(user=user, saved_scaffolds=[], scaffold_config={})
-            user_data.save()
-            return redirect("pages:login")
+            email = form.cleaned_data["email"]
+            try:
+                form.save(commit=True)
+                user = UserModel.objects.get(Q(username__iexact=username) | Q(email__iexact=email))
+                user_data = UserData(user=user, saved_scaffolds=[], scaffold_config=generate_starter_data())
+                user_data.save()
+                return redirect("pages:login")
+            except:
+                try:
+                    user = UserModel.objects.get(Q(username__iexact=username) | Q(email__iexact=email))
+                    user.delete()
+                except:
+                    pass
+                try:
+                    UserData.objects.get(user=user).delete()
+                except:
+                    pass
+                errors = form._errors.setdefault(NON_FIELD_ERRORS, ErrorList())
+                errors.append(u"There was an issue creating your account. :(")
     else:
         form = UserSignupForm()
     return render(request, "pages/auth/signup.html", {"form": form})
