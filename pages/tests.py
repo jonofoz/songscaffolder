@@ -103,7 +103,7 @@ class UserTestCase(BaseTestClass):
         # Test UserData
         user_data = UserData.objects.get(user=UserModel.objects.get(username=self.username))
         self.assertEqual(user_data.saved_scaffolds, [])
-        self.assertEqual(user_data.scaffold_config, {})
+        self.assertNotEqual(user_data.scaffold_config, {})
 
     def test_login(self):
         for login_data in [login_data_using_name, login_data_using_email]:
@@ -142,8 +142,8 @@ class UserTestCase(BaseTestClass):
         # Now, let's check if the UserData is there.
         user_data = UserData.objects.get(user=self.user)
         self.assertEqual(user_data.user.username, self.username)
-        self.assertEqual(user_data.scaffold_config, {})
         self.assertEqual(user_data.saved_scaffolds, [])
+        self.assertEqual(user_data.scaffold_config, {})
 
     def test_remove_user(self):
         # Here we're going to prove that removing a User will also remove their corresponding UserData.
