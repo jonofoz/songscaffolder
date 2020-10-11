@@ -1,9 +1,13 @@
 {% extends 'base.html' %}
-{% load static %}
+
 {% load _extras %}
 
 {% block title %}
 {{ ""|replace_dashes:field_name|title }}
+{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 {% endblock %}
 
 {% block content %}
@@ -34,14 +38,14 @@
                     <td class="text-center d-flex justify-content-center">
                         <ul class="pagination">
                             {% for i in "012345"|make_list %}
-                                <li class="d-none d-md-flex page-item{% if i == ''|addstr:v  %} active {% endif %}"><p class="page-link" href="#">{{ i }}</p></li>
+                                <li class="d-none d-md-flex field-item {% if i == ''|addstr:v  %}active{% endif %}"><p class="page-link" href="#">{{ i }}</p></li>
                             {% endfor %}
                         </ul>
                         <li class="d-flex d-md-none"></li><input type="text" class="config-input-quantity no-border border-bottom field-form inherit-bg-color d-flex d-md-none text-center" placeholder="0-5" value="{{ v }}"></input></li>
                     </td>
                     <td style="width: 10%;">
                         <a href="#" class="d-none d-md-flex btn btn-secondary btn-grey row-deleter active justify-content-center" role="button" aria-pressed="true">Delete</a>
-                        <img src="{%static 'img/delete-icon.svg' %}" class="d-flex d-md-none row-deleter">
+                        <i class="d-flex d-md-none fa fa-times-circle row-deleter"></i>
                     </td>
                 </tr>
             {% endwith %}
@@ -50,10 +54,13 @@
 </table>
 
 <div class="row">
-    <div class="col-10">
+    <div class="col-12 col-md-9">
         <button class="btn btn-primary btn-confirm btn-block" id="button-add-rows">+</button>
     </div>
-    <div class="col-2">
+    <div id="add-rows-spacer">
+        <br>
+    </div>
+    <div class="col-12 col-md-3 text-center">
         <label id="label-for-n-rows" for="how-many-to-add">Add this many new rows</label>
         <input type="text" id="how-many-to-add" class="no-border border-bottom field-form text-center" placeholder=1>
     </div>
@@ -76,14 +83,14 @@
                 <td class="text-center d-flex justify-content-center">
                     <ul class="pagination">
                         {% for i in "012345"|make_list %}
-                            <li class="d-none d-md-flex page-item{% if i == '3'  %} active {% endif %}"><p class="page-link" href="#">{{ i }}</p></li>
+                            <li class="d-none d-md-flex field-item {% if i == '3' %}active{% endif %}"><p class="page-link" href="#">{{ i }}</p></li>
                         {% endfor %}
                     </ul>
                     <li class="d-flex d-md-none"></li><input type="text" class="config-input-quantity no-border border-bottom field-form inherit-bg-color d-flex d-md-none text-center" placeholder="0-5" value="3"></input></li>
                 </td>
                 <td style="width: 10%;">
                     <a href="#" class="d-none d-md-flex btn btn-secondary btn-grey row-deleter active justify-content-center" role="button" aria-pressed="true">Delete</a>
-                    <img src="{%static 'img/delete-icon.svg' %}" class="d-flex d-md-none row-deleter">
+                    <i class="d-flex d-md-none fa fa-times-circle row-deleter"></i>
                 </td>
             </tr>
         `)
@@ -91,29 +98,31 @@
 </script>
 
 <script>
-    colHeaderFreq = $("#col-header-frequency")
-    colHeaderDelete = $("#col-header-delete")
-    labelRows = $("#label-for-n-rows")
+    colHeaderFreq = $("#col-header-frequency");
+    colHeaderDelete = $("#col-header-delete");
+    labelRows = $("#label-for-n-rows");
+    addRowsSpacer = $("#add-rows-spacer");
+    table = $("table");
     function checkScreenSize(){
         if (screen.width < 768){
             colHeaderFreq.html("<p>Freq.</p>");
             colHeaderDelete.html("<p>Del.</p>");
-            labelRows.html("Add rows");
+            addRowsSpacer.show();
         }
         else{
             colHeaderFreq.html("<p>How often it's chosen</p>");
             colHeaderDelete.html("<p>delet this</p>");
-            labelRows.html("Add this many new rows");
+            addRowsSpacer.hide();
         }
     }
 
     function checkWhatShouldBeDisplayed(){
         tableRowCount = $("td").length / 3
         if (tableRowCount > 0) {
-            $("table").show()
+            table.show()
         }
         else {
-            $("table").hide()
+            table.hide()
         }
         saveDeleteRow = $("#save-delete-2")
         if (tableRowCount >= 5){
@@ -151,7 +160,7 @@
         }
         item.addClass("active")
     }
-    $(document).on("click", "li", function() {
+    $(document).on("click", ".field-item", function() {
         setActive($(this))
         // Set the equivalent input to the same value.
         $(this).parent().parent().children("input").val($(this).text())
