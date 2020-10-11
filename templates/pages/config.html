@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static %}
+
 {% load _extras %}
 
 {% block title %}
@@ -38,7 +38,7 @@
                     <td class="text-center d-flex justify-content-center">
                         <ul class="pagination">
                             {% for i in "012345"|make_list %}
-                                <li class="d-none d-md-flex page-item{% if i == ''|addstr:v  %} active {% endif %}"><p class="page-link" href="#">{{ i }}</p></li>
+                                <li class="d-none d-md-flex field-item {% if i == ''|addstr:v  %}active{% endif %}"><p class="page-link" href="#">{{ i }}</p></li>
                             {% endfor %}
                         </ul>
                         <li class="d-flex d-md-none"></li><input type="text" class="config-input-quantity no-border border-bottom field-form inherit-bg-color d-flex d-md-none text-center" placeholder="0-5" value="{{ v }}"></input></li>
@@ -83,7 +83,7 @@
                 <td class="text-center d-flex justify-content-center">
                     <ul class="pagination">
                         {% for i in "012345"|make_list %}
-                            <li class="d-none d-md-flex page-item{% if i == '3'  %} active {% endif %}"><p class="page-link" href="#">{{ i }}</p></li>
+                            <li class="d-none d-md-flex field-item {% if i == '3' %}active{% endif %}"><p class="page-link" href="#">{{ i }}</p></li>
                         {% endfor %}
                     </ul>
                     <li class="d-flex d-md-none"></li><input type="text" class="config-input-quantity no-border border-bottom field-form inherit-bg-color d-flex d-md-none text-center" placeholder="0-5" value="3"></input></li>
@@ -160,7 +160,7 @@
         }
         item.addClass("active")
     }
-    $(document).on("click", "li", function() {
+    $(document).on("click", ".field-item", function() {
         setActive($(this))
         // Set the equivalent input to the same value.
         $(this).parent().parent().children("input").val($(this).text())

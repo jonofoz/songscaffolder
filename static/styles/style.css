@@ -327,12 +327,13 @@ textarea:hover{
   border-color: var(--primary-grey) !important;
 }
 
-.page-item.active .page-link {
+.field-item.active .page-link {
     z-index: 3;
     color: var(--white) !important;
-    background-color: var(--primary-green);
+    background-color: var(--primary-green) !important;
     border-color: #ddd !important;
 }
+
 .page-link.active {
   color: var(--white) !important;
 }

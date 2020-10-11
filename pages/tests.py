@@ -173,7 +173,7 @@ class UserTestCase(BaseTestClass):
         keys_values = [(k,v) for k,v in self.user_data.scaffold_config["chords"].items()]
         keys = tree.xpath("//input[@placeholder='Edit Me!']")
         keys = sorted([k.value for k in keys])
-        values = tree.xpath("//li[contains(@class, 'page-item') and contains(@class, 'active')]")
+        values = tree.xpath("//li[contains(@class, 'field-item') and contains(@class, 'active')]")
         values = sorted([v.text_content() for v in values])
         self.assertEqual(len(keys), 5)
         self.assertEqual(len(values), 5)
