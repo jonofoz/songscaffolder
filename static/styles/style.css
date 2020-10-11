@@ -105,6 +105,7 @@ input:checked + .slider:before {
 }
 
 /* || FontAwesome styling */
+
 .fa-list {
   color: var(--white);
   background-color: var(--primary-grey);
@@ -124,6 +125,11 @@ input:checked + .slider:before {
   color: var(--primary-green);
   font-size: 34px;
   bottom: 10px;
+}
+
+.fa-times-circle {
+  color: var(--primary-grey);
+  font-size: 40px;
 }
 
 .center{
@@ -247,6 +253,10 @@ a:active {
 }
 
 a.fa, a.fa:active {
+  color: var(--white) !important;
+}
+
+a.row-deleter, a.row-deleter:active {
   color: var(--white) !important;
 }
 
